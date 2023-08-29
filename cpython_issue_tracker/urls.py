@@ -22,5 +22,5 @@ from cpython_issue_tracker import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    re_path(r'^.*$', TemplateView.as_view(template_name='react_build/index.html')),
-] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    re_path(r'^.*$', TemplateView.as_view(template_name='index.html')),
+]
