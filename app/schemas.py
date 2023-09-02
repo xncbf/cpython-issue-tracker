@@ -1,6 +1,7 @@
-from pydantic import BaseModel, HttpUrl, AnyUrl, Field
+from pydantic import BaseModel, HttpUrl, AnyUrl, Field, constr
 from enum import Enum
 from datetime import datetime
+
 
 class User(BaseModel):
     name: str | None
@@ -49,7 +50,7 @@ class Milestone(BaseModel):
     number: int
     state: StateEnum
     title: str
-    description: str  = None
+    description: str 
     creator: User | None
     open_issues: int
     closed_issues: int
@@ -112,16 +113,46 @@ class Reactions(BaseModel):
     eyes: int
     rocket: int
 
-user: User
-labels: list[Label]
-assignee: User | None
-assignees: list[User]
-milestone: Milestone | None
-pull_request: PullRequest | None
-closed_by: User | None
-author_association: AuthorAssociationEnum
-performed_via_github_app: GitHubApp | None
-reactions: Reactions
+
+class StateReasonEnum(str, Enum):
+    completed = "completed"
+    reopened = "reopened"
+    not_planned = "not_planned"
+
+class Issue(BaseModel):
+    id: int
+    node_id: str
+    url: HttpUrl
+    repository_url: HttpUrl
+    labels_url: str
+    comments_url: HttpUrl
+    events_url: HttpUrl
+    html_url: HttpUrl
+    number: int
+    state: StateEnum
+    state_reason: StateReasonEnum | None
+    title: str
+    body: str | None
+    locked: bool
+    active_lock_reason: str | None
+    comments: int
+    closed_at: datetime | None
+    created_at: datetime
+    updated_at: datetime
+    draft: bool
+    body_html: str
+    body_text: str
+    timeline_url: HttpUrl
+    user: User
+    labels: list[Label]
+    assignee: User | None
+    assignees: list[User]
+    milestone: Milestone | None
+    pull_request: PullRequest | None
+    closed_by: User | None
+    author_association: AuthorAssociationEnum
+    performed_via_github_app: GitHubApp | None
+    reactions: Reactions
 
 
 # "repository": {
