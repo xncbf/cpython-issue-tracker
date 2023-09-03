@@ -4,7 +4,7 @@ from django.db import models
 class Issue(models.Model):
     data_json = models.JSONField(null=True, blank=True)
     updated_at = models.DateTimeField()
-    draft = models.JSONField(null=True, blank=True) # JSONField 사용 시, dict | bool | None의 경우 고려
+    draft = models.BooleanField(null=True)
     comments_url = models.URLField(max_length=200)
     comments = models.PositiveIntegerField()
     html_url = models.URLField(max_length=200)

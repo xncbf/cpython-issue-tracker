@@ -3,7 +3,7 @@ from datetime import datetime
 
 class IssueSchema(Schema):
     updated_at: datetime
-    draft: dict | bool | None = None
+    draft: bool | None = None
     comments_url: str
     comments: int
     html_url: str
