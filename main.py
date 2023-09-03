@@ -27,10 +27,8 @@ def fetch_all_issues():
             print(page)
             for issue_data in issues:
                 issue, _ = Issue.objects.get_or_create(
-                    id=issue_data["id"],
-                    defaults={
-                        "data_json": issue_data
-                    }
+                    id=issue_data.pop("id"),
+                    defaults=issue_data
                 )
             page += 1
 
