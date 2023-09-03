@@ -1,8 +1,6 @@
 from pydantic import BaseModel
 
 
-class UserSchema(BaseModel):
-    x: str| None = None
 class IssueSchema(BaseModel):
     updated_at: str
     draft: dict | bool | None = None
