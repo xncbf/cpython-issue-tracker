@@ -11,7 +11,7 @@ function IssueDetail() {
     useEffect(() => {
         const fetchIssue = async () => {
             try {
-                const response = await axios.get<Issue>(`/api/issues/${id}/`);
+                const response = await axios.get<Issue>(`http://localhost:8000/api/issues/${id}`);
                 setIssue(response.data);
             } catch (error) {
                 console.error("Error fetching the issue:", error);

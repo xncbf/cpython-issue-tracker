@@ -12,3 +12,7 @@ api = NinjaAPI()
 def list_issues(request):
     queryset = Issue.objects.all()
     return queryset
+
+@api.get("/issues/{issue_id}", response={200: IssueSchema})
+def get_issue(request, issue_id: int):
+    return Issue.objects.get(id=issue_id)

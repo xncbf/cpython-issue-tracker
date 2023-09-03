@@ -8,6 +8,7 @@ django = "*"
 httpx = "*"
 pydantic = "*"
 django-ninja = "*"
+django-cors-headers = "*"
 
 [dev-packages]
 

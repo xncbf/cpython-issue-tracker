@@ -9,7 +9,7 @@ function IssueList() {
     const [nextPage, setNextPage] = useState<string | null>(null);
 
     useEffect(() => {
-        fetchIssues('/api/issues/');
+        fetchIssues('http://localhost:8000/api/issues/');
     }, []);
 
     const fetchIssues = async (url: string) => {
