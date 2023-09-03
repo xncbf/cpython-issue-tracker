@@ -19,8 +19,10 @@ from django.urls import path, re_path
 from django.views.generic import TemplateView
 from django.conf.urls.static import static
 from cpython_issue_tracker import settings
+from app.views import api
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path("api/", api.urls),
     re_path(r'^.*$', TemplateView.as_view(template_name='index.html')),
 ]

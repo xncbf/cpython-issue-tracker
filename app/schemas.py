@@ -1,7 +1,7 @@
-from pydantic import BaseModel
+from ninja import Schema
 
 
-class IssueSchema(BaseModel):
+class IssueSchema(Schema):
     updated_at: str
     draft: dict | bool | None = None
     comments_url: str
