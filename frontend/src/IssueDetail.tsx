@@ -1,31 +1,43 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Card, CardContent, Typography } from '@mui/material';
-import { Issue } from './types';  // 상대 경로를 바탕으로 Issue 타입을 가져옵니다.
+import { Typography, Container, Box, Paper, Button } from '@mui/material';
+import axios from 'axios';
+import { Issue } from './types';
 
 function IssueDetail() {
-    const [issue, setIssue] = useState<Issue | null>(null);
     const { id } = useParams<{ id: string }>();
+    const [issue, setIssue] = useState<Issue | null>(null);
 
     useEffect(() => {
-        // 선택된 이슈의 상세 정보를 API 호출을 통해 가져옵니다.
-        fetch(`/api/issues/${id}/`)
-            .then(response => response.json())
-            .then(data => setIssue(data));
+        const fetchIssue = async () => {
+            try {
+                const response = await axios.get<Issue>(`/api/issues/${id}/`);
+                setIssue(response.data);
+            } catch (error) {
+                console.error("Error fetching the issue:", error);
+            }
+        };
+        fetchIssue();
     }, [id]);
 
-    if (!issue) return <div>Loading...</div>;
+    if (!issue) return <Typography>Loading...</Typography>;
 
     return (
-        <Card>
-            <CardContent>
-                <Typography variant="h5">{issue.title}</Typography>
-                <Typography variant="body2" color="textSecondary">
-                    {issue.body}
+        <Container>
+            <Box my={4}>
+                <Typography variant="h4" gutterBottom>
+                    {issue.title}
                 </Typography>
-                {/* 추가적으로 다른 필드들도 표시할 수 있습니다. */}
-            </CardContent>
-        </Card>
+                <Paper elevation={3} style={{ padding: '16px' }}>
+                    <Typography variant="body1">{issue.body}</Typography>
+                </Paper>
+                <Box mt={2}>
+                    <Button variant="contained" color="primary" href={issue.html_url} target="_blank">
+                        View on GitHub
+                    </Button>
+                </Box>
+            </Box>
+        </Container>
     );
 }
 
