@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback, useRef } from 'react';
 import {
     List, ListItem, ListItemText, ListItemAvatar, Typography, 
     Container, Box, Divider, Avatar, ListItemButton, TextField,
-    Select, MenuItem, FormControlLabel, FormControl, InputLabel
+    Select, MenuItem, FormControlLabel, FormControl, InputLabel, Grid
 } from '@mui/material';
 import axios from 'axios';
 import { Issue, IssueAPIResponse } from './types';
@@ -105,70 +105,87 @@ function IssueList() {
     };
     
     return (
-        <Container>
+        <Container maxWidth="lg">
             <Box my={4}>
                 <Typography variant="h4" gutterBottom>
                     Cpython Issues
                 </Typography>
-                <Box my={2}>
-                    <TextField
-                        name="title"
-                        label="Filter by title"
-                        variant="outlined"
-                        fullWidth
-                        value={filter}
-                        onChange={handleFilterChange}
-                    />
-                    <FormControl fullWidth variant="outlined" margin="normal">
-                        <InputLabel>Status</InputLabel>
-                        <Select
-                            name="state"
-                            value={stateFilter}
-                            onChange={handleFilterChange}
-                            label="Status"
-                        >
-                            <MenuItem value=""><em>None</em></MenuItem>
-                            <MenuItem value="open">Open</MenuItem>
-                            <MenuItem value="closed">Closed</MenuItem>
-                        </Select>
-                    </FormControl>
-                    <FormControl fullWidth variant="outlined" margin="normal">
-                        <InputLabel>Labels</InputLabel>
-                        <Select
-                            name="labels"
-                            multiple
-                            value={labelFilter}
-                            onChange={handleFilterChange}
-                            label="Labels"
-                        >
-                            {/* Assuming you have a list of labels */}
-                            {["bug", "enhancement", "documentation"].map(label => (
-                                <MenuItem key={label} value={label}>
-                                    {label}
-                                </MenuItem>
+    
+                <Grid container spacing={3}>
+                    {/* 필터링 부분 */}
+                    <Grid item xs={12} md={4}>
+                        <Box my={2}>
+                            <TextField
+                                name="title"
+                                label="Filter by title"
+                                variant="outlined"
+                                fullWidth
+                                value={filter}
+                                onChange={handleFilterChange}
+                            />
+                        </Box>
+    
+                        <Box my={2}>
+                            <FormControl fullWidth variant="outlined" margin="normal">
+                                <InputLabel>Status</InputLabel>
+                                <Select
+                                    name="state"
+                                    value={stateFilter}
+                                    onChange={handleFilterChange}
+                                    label="Status"
+                                >
+                                    <MenuItem value=""><em>None</em></MenuItem>
+                                    <MenuItem value="open">Open</MenuItem>
+                                    <MenuItem value="closed">Closed</MenuItem>
+                                </Select>
+                            </FormControl>
+                        </Box>
+    
+                        <Box my={2}>
+                            <FormControl fullWidth variant="outlined" margin="normal">
+                                <InputLabel>Labels</InputLabel>
+                                <Select
+                                    name="labels"
+                                    multiple
+                                    value={labelFilter}
+                                    onChange={handleFilterChange}
+                                    label="Labels"
+                                >
+                                    {["bug", "enhancement", "documentation"].map(label => (
+                                        <MenuItem key={label} value={label}>
+                                            {label}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                        </Box>
+    
+                        {/* ... 여기에 필요한 다른 필터 컴포넌트를 추가하세요. */}
+                    </Grid>
+    
+                    {/* 이슈 목록 부분 */}
+                    <Grid item xs={12} md={8}>
+                        <List>
+                            {issues.map((issue, index) => (
+                                <React.Fragment key={issue.id}>
+                                    <ListItem>
+                                        <ListItemButton component="a" href={issue.html_url} target="_blank" rel="noopener noreferrer">
+                                            <ListItemAvatar>
+                                                <Avatar>{issue.id}</Avatar>
+                                            </ListItemAvatar>
+                                            <ListItemText primary={issue.title} />
+                                        </ListItemButton>
+                                    </ListItem>
+                                    {index !== issues.length - 1 && <Divider />}
+                                </React.Fragment>
                             ))}
-                        </Select>
-                    </FormControl>
-                    {/* ... Add similar form controls for other filters, such as DatePicker for the dates, etc. ... */}
-                </Box>
-                <List>
-                    {issues.map((issue, index) => (
-                        <React.Fragment key={issue.id}>
-                            <ListItem>
-                                <ListItemButton component="a" href={issue.html_url} target="_blank" rel="noopener noreferrer">
-                                    <ListItemAvatar>
-                                        <Avatar>{issue.id}</Avatar>
-                                    </ListItemAvatar>
-                                    <ListItemText primary={issue.title} />
-                                </ListItemButton>
-                            </ListItem>
-                            {index !== issues.length - 1 && <Divider />}
-                        </React.Fragment>
-                    ))}
-                </List>
+                        </List>
+                    </Grid>
+                </Grid>
             </Box>
         </Container>
     );
+    
 }
 
 export default IssueList;
