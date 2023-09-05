@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import {
-    List, ListItem, ListItemText, ListItemAvatar, Typography, Button, 
+    List, ListItem, ListItemText, ListItemAvatar, Typography, 
     Container, Box, Divider, Avatar, ListItemButton, TextField
 } from '@mui/material';
 import axios from 'axios';
@@ -9,31 +9,40 @@ import { Issue, IssueAPIResponse } from './types';
 function IssueList() {
     const [issues, setIssues] = useState<Issue[]>([]);
     const [filter, setFilter] = useState('');
-    const [nextPage, setNextPage] = useState<string | null>(null);
+    const [offset, setOffset] = useState(0);
+    const limit = 10; // 원하는 limit 값
 
     useEffect(() => {
-        fetchIssues('http://localhost:8000/api/issues/');
-    }, []);
+        fetchIssues();
+        // 스크롤 이벤트 리스너 추가
+        window.addEventListener('scroll', handleScroll);
+        return () => {
+            // cleanup
+            window.removeEventListener('scroll', handleScroll);
+        };
+    }, [filter]);
 
-    const fetchIssues = async (url: string, filterValue: string = '') => {
+    const fetchIssues = async () => {
         try {
-            let apiUrl = url;
-            if (filterValue) {
-                apiUrl += `?title=${filterValue}`; // API가 title 쿼리 파라미터를 지원한다고 가정
-            }
-
+            const apiUrl = `http://localhost:8000/api/issues/?limit=${limit}&offset=${offset}${filter ? `&title=${filter}` : ''}`;
             const response = await axios.get<IssueAPIResponse>(apiUrl);
-            setIssues(response.data.items);
-            setNextPage(response.data.next);
+            setIssues(prevIssues => [...prevIssues, ...response.data.items]);
+            setOffset(prevOffset => prevOffset + limit);
         } catch (error) {
             console.error("Error fetching issues:", error);
         }
     };
 
+    const handleScroll = useCallback(() => {
+        if (window.innerHeight + document.documentElement.scrollTop !== document.documentElement.offsetHeight) return;
+        fetchIssues();
+    }, [offset, filter]);
+
     const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
         setFilter(value);
-        fetchIssues('http://localhost:8000/api/issues/', value);
+        setOffset(0);
+        setIssues([]);
     };
 
     return (
@@ -67,13 +76,6 @@ function IssueList() {
                         </React.Fragment>
                     ))}
                 </List>
-                {nextPage && (
-                    <Box mt={2} display="flex" justifyContent="center">
-                        <Button variant="contained" color="primary" onClick={() => fetchIssues(nextPage, filter)}>
-                            Load More
-                        </Button>
-                    </Box>
-                )}
             </Box>
         </Container>
     );
