@@ -108,7 +108,7 @@ function IssueList() {
         <Container maxWidth="lg">
             <Box my={4}>
                 <Typography variant="h4" gutterBottom>
-                    Cpython Issues
+                    CPython Issues
                 </Typography>
     
                 <Grid container spacing={3}>
