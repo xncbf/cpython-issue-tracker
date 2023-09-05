@@ -10,7 +10,7 @@ api = NinjaAPI()
 @api.get("/issues/", response={200: list[IssueSchema]})
 @paginate
 def list_issues(request):
-    queryset = Issue.objects.all()
+    queryset = Issue.objects.all().order_by("-id")
     return queryset
 
 @api.get("/issues/{issue_id}", response={200: IssueSchema})
