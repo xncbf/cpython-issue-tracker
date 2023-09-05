@@ -23,19 +23,32 @@ function IssueList() {
         };
     }, [filter]);
 
-    const fetchIssues = async () => {
+    const fetchIssues = async (isSearch: boolean = false) => {
         const currentOffset = offsetRef.current;
+        const apiUrl = `http://localhost:8000/api/issues/?limit=${limit}&offset=${currentOffset}${filter ? `&title=${filter}` : ''}`;
+        
+        if (isSearch) {
+            // 검색 요청이면 이전 요청을 취소
+            abortController.abort();
+        }
+    
         try {
-            const apiUrl = `http://localhost:8000/api/issues/?limit=${limit}&offset=${currentOffset}${filter ? `&title=${filter}` : ''}`;
-            const response = await axios.get<IssueAPIResponse>(apiUrl);
+            const response = await axios.get<IssueAPIResponse>(apiUrl, {
+                signal: abortController.signal
+            });
             setIssues(prevIssues => [...prevIssues, ...response.data.items]);
     
-            if (response.data.items.length > 0) { 
+            if (response.data.items.length > 0) {
                 offsetRef.current += limit;
             }
-    
         } catch (error) {
-            console.error("Error fetching issues:", error);
+            if (error instanceof Error) {
+                // 요청이 사용자에 의해 취소되었을 경우만 오류를 무시합니다.
+                if (error.name === 'CanceledError') return;
+                console.error("Error fetching issues:", error.message);
+            } else {
+                console.error("An unexpected error occurred:", error);
+            }
         }
     };
     
@@ -48,11 +61,13 @@ function IssueList() {
     const handleFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const searchKeyword = event.target.value;
         setFilter(searchKeyword);
-    
-        // 검색 키워드가 변경될 때 offset과 이슈 목록 초기화
         offsetRef.current = 0;
         setIssues([]);
+    
+        fetchIssues(true); // 검색 요청으로 처리
     };
+    
+    
 
     return (
         <Container>
