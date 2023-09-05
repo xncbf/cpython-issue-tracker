@@ -1,7 +1,8 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import {
     List, ListItem, ListItemText, ListItemAvatar, Typography, 
-    Container, Box, Divider, Avatar, ListItemButton, TextField
+    Container, Box, Divider, Avatar, ListItemButton, TextField,
+    Select, MenuItem, FormControlLabel, FormControl, InputLabel
 } from '@mui/material';
 import axios from 'axios';
 import { Issue, IssueAPIResponse } from './types';
@@ -9,35 +10,46 @@ import { Issue, IssueAPIResponse } from './types';
 function IssueList() {
     const [issues, setIssues] = useState<Issue[]>([]);
     const [filter, setFilter] = useState('');
-    const offsetRef = useRef(0); // 여기에 추가
-    const limit = 20; // 원하는 limit 값
+    const [stateFilter, setStateFilter] = useState('');
+    const [labelFilter, setLabelFilter] = useState([]);
+    const [createdDateFilter, setCreatedDateFilter] = useState(null);
+    const [commentsFilter, setCommentsFilter] = useState(null);
+    const [assigneeFilter, setAssigneeFilter] = useState('');
+    const [lockedFilter, setLockedFilter] = useState(null);
+    const [draftFilter, setDraftFilter] = useState(null);
+    
+    const offsetRef = useRef(0);
+    const limit = 20;
     const abortController = new AbortController();
 
     useEffect(() => {
         fetchIssues();
-        // 스크롤 이벤트 리스너 추가
         window.addEventListener('scroll', handleScroll);
         return () => {
-            // cleanup
             window.removeEventListener('scroll', handleScroll);
         };
-    }, [filter]);
+    }, [filter, stateFilter, labelFilter, createdDateFilter, commentsFilter, assigneeFilter, lockedFilter, draftFilter]);
 
-    const fetchIssues = async (isSearch: boolean = false) => {
-        const currentOffset = offsetRef.current;
-        const apiUrl = `http://localhost:8000/api/issues/?limit=${limit}&offset=${currentOffset}${filter ? `&title=${filter}` : ''}`;
-        
+    const fetchIssues = async (isSearch = false) => {
+        let apiUrl = `http://localhost:8000/api/issues/?limit=${limit}&offset=${offsetRef.current}`;
+        apiUrl += filter ? `&title=${filter}` : '';
+        apiUrl += stateFilter ? `&state=${stateFilter}` : '';
+        apiUrl += labelFilter.length > 0 ? `&labels=${labelFilter.join(',')}` : '';
+        apiUrl += createdDateFilter ? `&created_at=${createdDateFilter}` : '';
+        apiUrl += commentsFilter ? `&comments=${commentsFilter}` : '';
+        apiUrl += assigneeFilter ? `&assignee=${assigneeFilter}` : '';
+        apiUrl += lockedFilter !== null ? `&locked=${lockedFilter}` : '';
+        apiUrl += draftFilter !== null ? `&draft=${draftFilter}` : '';
+
         if (isSearch) {
-            // 검색 요청이면 이전 요청을 취소
             abortController.abort();
         }
-    
+
         try {
             const response = await axios.get<IssueAPIResponse>(apiUrl, {
                 signal: abortController.signal
             });
             setIssues(prevIssues => [...prevIssues, ...response.data.items]);
-    
             if (response.data.items.length > 0) {
                 offsetRef.current += limit;
             }
@@ -51,39 +63,93 @@ function IssueList() {
             }
         }
     };
-    
 
     const handleScroll = useCallback(() => {
         if (window.innerHeight + document.documentElement.scrollTop !== document.documentElement.offsetHeight) return;
         fetchIssues();
     }, [offsetRef, filter]);
 
-    const handleFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const searchKeyword = event.target.value;
-        setFilter(searchKeyword);
+    const handleFilterChange = (event: any) => {
+        const { name, value } = event.target;
+        switch(name) {
+            case 'title':
+                setFilter(value);
+                break;
+            case 'state':
+                setStateFilter(value);
+                break;
+            case 'labels':
+                setLabelFilter(value);
+                break;
+            case 'createdDate':
+                setCreatedDateFilter(value);
+                break;
+            case 'comments':
+                setCommentsFilter(value);
+                break;
+            case 'assignee':
+                setAssigneeFilter(value);
+                break;
+            case 'locked':
+                setLockedFilter(value);
+                break;
+            case 'draft':
+                setDraftFilter(value);
+                break;
+            default:
+                break;
+        }
         offsetRef.current = 0;
         setIssues([]);
-    
-        fetchIssues(true); // 검색 요청으로 처리
+        fetchIssues(true);
     };
     
-    
-
     return (
         <Container>
             <Box my={4}>
                 <Typography variant="h4" gutterBottom>
                     Issue List
                 </Typography>
-                {/* Filter Input */}
                 <Box my={2}>
                     <TextField
+                        name="title"
                         label="Filter by title"
                         variant="outlined"
                         fullWidth
                         value={filter}
                         onChange={handleFilterChange}
                     />
+                    <FormControl fullWidth variant="outlined" margin="normal">
+                        <InputLabel>Status</InputLabel>
+                        <Select
+                            name="state"
+                            value={stateFilter}
+                            onChange={handleFilterChange}
+                            label="Status"
+                        >
+                            <MenuItem value=""><em>None</em></MenuItem>
+                            <MenuItem value="open">Open</MenuItem>
+                            <MenuItem value="closed">Closed</MenuItem>
+                        </Select>
+                    </FormControl>
+                    <FormControl fullWidth variant="outlined" margin="normal">
+                        <InputLabel>Labels</InputLabel>
+                        <Select
+                            name="labels"
+                            multiple
+                            value={labelFilter}
+                            onChange={handleFilterChange}
+                            label="Labels"
+                        >
+                            {/* Assuming you have a list of labels */}
+                            {["bug", "enhancement", "documentation"].map(label => (
+                                <MenuItem key={label} value={label}>
+                                    {label}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+                    {/* ... Add similar form controls for other filters, such as DatePicker for the dates, etc. ... */}
                 </Box>
                 <List>
                     {issues.map((issue, index) => (
