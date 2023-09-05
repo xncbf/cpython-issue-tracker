@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import {
     List, ListItem, ListItemText, ListItemAvatar, Typography, 
     Container, Box, Divider, Avatar, ListItemButton, TextField
@@ -9,8 +9,9 @@ import { Issue, IssueAPIResponse } from './types';
 function IssueList() {
     const [issues, setIssues] = useState<Issue[]>([]);
     const [filter, setFilter] = useState('');
-    const [offset, setOffset] = useState(0);
-    const limit = 10; // 원하는 limit 값
+    const offsetRef = useRef(0); // 여기에 추가
+    const limit = 20; // 원하는 limit 값
+    const abortController = new AbortController();
 
     useEffect(() => {
         fetchIssues();
@@ -23,25 +24,33 @@ function IssueList() {
     }, [filter]);
 
     const fetchIssues = async () => {
+        const currentOffset = offsetRef.current;
         try {
-            const apiUrl = `http://localhost:8000/api/issues/?limit=${limit}&offset=${offset}${filter ? `&title=${filter}` : ''}`;
+            const apiUrl = `http://localhost:8000/api/issues/?limit=${limit}&offset=${currentOffset}${filter ? `&title=${filter}` : ''}`;
             const response = await axios.get<IssueAPIResponse>(apiUrl);
             setIssues(prevIssues => [...prevIssues, ...response.data.items]);
-            setOffset(prevOffset => prevOffset + limit);
+    
+            if (response.data.items.length > 0) { 
+                offsetRef.current += limit;
+            }
+    
         } catch (error) {
             console.error("Error fetching issues:", error);
         }
     };
+    
 
     const handleScroll = useCallback(() => {
         if (window.innerHeight + document.documentElement.scrollTop !== document.documentElement.offsetHeight) return;
         fetchIssues();
-    }, [offset, filter]);
+    }, [offsetRef, filter]);
 
-    const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = e.target.value;
-        setFilter(value);
-        setOffset(0);
+    const handleFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const searchKeyword = event.target.value;
+        setFilter(searchKeyword);
+    
+        // 검색 키워드가 변경될 때 offset과 이슈 목록 초기화
+        offsetRef.current = 0;
         setIssues([]);
     };
 
