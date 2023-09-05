@@ -108,7 +108,7 @@ function IssueList() {
         <Container>
             <Box my={4}>
                 <Typography variant="h4" gutterBottom>
-                    Issue List
+                    Cpython Issues
                 </Typography>
                 <Box my={2}>
                     <TextField
