@@ -173,13 +173,15 @@ function IssueList() {
                                         color: 'inherit'
                                     }}
                                 >
-                                    <Box display="flex" alignItems="center">
-                                        <ListItemAvatar>
-                                            <Avatar sx={{ bg: 'gray', color: 'white' }}>{issue.id}</Avatar>
-                                        </ListItemAvatar>
-                                        <ListItemText primary={issue.title} sx={{ ml: 2 }} />
+                                    <Box display="flex" flexDirection="column">
+                                        <Box display="flex" alignItems="center">
+                                            {/* <ListItemAvatar>
+                                                <Avatar sx={{ bg: 'gray', color: 'white' }}>{issue.id}</Avatar>
+                                            </ListItemAvatar> */}
+                                            <ListItemText primary={issue.title} sx={{ ml: 2 }} />
+                                        </Box>
+                                        <Typography variant="body2" color="textSecondary" sx={{ ml: 2 }}>#{issue.number} opened {issue.created_at} by {issue.user.login}</Typography>
                                     </Box>
-                                    {/* Add icons or other elements here, e.g. issue labels */}
                                 </ListItemButton>
                             </ListItem>
                             {index !== issues.length - 1 && <Divider />}
