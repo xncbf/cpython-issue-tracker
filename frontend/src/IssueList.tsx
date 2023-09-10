@@ -109,17 +109,23 @@ function IssueList() {
                 <Typography variant="h4" gutterBottom>
                     CPython Issues
                 </Typography>
-    
-                {/* 필터링 부분 */}
-                <Box display="flex" flexDirection="row" mb={3} justifyContent="space-between">
+
+                <Box sx={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    mb: 3,
+                    justifyContent: 'space-between',
+                    gap: 2
+                }}>
                     <TextField
                         name="title"
                         label="Search by title"
                         variant="outlined"
                         value={filter}
                         onChange={handleFilterChange}
+                        sx={{ flex: 2 }}
                     />
-                    <FormControl variant="outlined">
+                    <FormControl variant="outlined" sx={{ flex: 1 }}>
                         <InputLabel>Status</InputLabel>
                         <Select
                             name="state"
@@ -132,7 +138,7 @@ function IssueList() {
                             <MenuItem value="closed">Closed</MenuItem>
                         </Select>
                     </FormControl>
-                    <FormControl variant="outlined">
+                    <FormControl variant="outlined" sx={{ flex: 1 }}>
                         <InputLabel>Labels</InputLabel>
                         <Select
                             name="labels"
@@ -149,17 +155,31 @@ function IssueList() {
                         </Select>
                     </FormControl>
                 </Box>
-    
-                {/* 이슈 목록 부분 */}
+
                 <List>
                     {issues.map((issue, index) => (
                         <React.Fragment key={issue.id}>
-                            <ListItem>
-                                <ListItemButton component="a" href={issue.html_url} target="_blank" rel="noopener noreferrer">
-                                    <ListItemAvatar>
-                                        <Avatar>{issue.id}</Avatar>
-                                    </ListItemAvatar>
-                                    <ListItemText primary={issue.title} />
+                            <ListItem disablePadding>
+                                <ListItemButton 
+                                    component="a" 
+                                    href={issue.html_url} 
+                                    target="_blank" 
+                                    rel="noopener noreferrer"
+                                    sx={{
+                                        width: '100%',
+                                        display: 'flex',
+                                        justifyContent: 'space-between',
+                                        textDecoration: 'none',
+                                        color: 'inherit'
+                                    }}
+                                >
+                                    <Box display="flex" alignItems="center">
+                                        <ListItemAvatar>
+                                            <Avatar sx={{ bg: 'gray', color: 'white' }}>{issue.id}</Avatar>
+                                        </ListItemAvatar>
+                                        <ListItemText primary={issue.title} sx={{ ml: 2 }} />
+                                    </Box>
+                                    {/* Add icons or other elements here, e.g. issue labels */}
                                 </ListItemButton>
                             </ListItem>
                             {index !== issues.length - 1 && <Divider />}
@@ -169,7 +189,6 @@ function IssueList() {
             </Box>
         </Container>
     );
-    
 }
 
 export default IssueList;
