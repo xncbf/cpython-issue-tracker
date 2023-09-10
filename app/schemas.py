@@ -1,4 +1,4 @@
-from ninja import Schema
+from ninja import Schema, FilterSchema
 from datetime import datetime
 
 class IssueSchema(Schema):
@@ -32,3 +32,36 @@ class IssueSchema(Schema):
     assignees: list
     events_url: str
     url: str
+
+
+class IssueFilterSchema(FilterSchema):
+    updated_at: datetime | None
+    draft: bool | None
+    comments_url: str | None
+    comments: int | None
+    html_url: str | None
+    closed_at: datetime | None
+    repository_url: str | None
+    timeline_url: str | None
+    state: str | None
+    reactions: dict | None
+    performed_via_github_app: str | None
+    title: str | None
+    assignee: dict | None
+    created_at: datetime | None
+    state_reason: str | None
+    body: str | None
+    locked: bool | None
+    labels: list | None
+    milestone: str | None
+    labels_url: str | None
+    id: int | None
+    number: int | None
+    node_id: str | None
+    author_association: str | None
+    pull_request: dict | None
+    user: dict | None
+    active_lock_reason: str | None
+    assignees: list | None
+    events_url: str | None
+    url: str | None
