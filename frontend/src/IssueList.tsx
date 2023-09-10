@@ -93,7 +93,7 @@ function IssueList() {
                 setStateFilter(value);
                 break;
             case 'labels':
-                setLabelFilter(value);
+                setLabelFilter(value as string[]);
                 break;
             case 'createdDate':
                 setCreatedDateFilter(value);

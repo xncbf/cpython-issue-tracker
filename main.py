@@ -28,10 +28,12 @@ def fetch_all_issues():
             print(page)
             for issue_data in issues:
                 issue_data['data_json'] = copy.deepcopy(issue_data)
+                labels = issue_data.pop("labels")
                 issue, _ = Issue.objects.get_or_create(
                     id=issue_data.pop("id"),
                     defaults=issue_data
                 )
+                issue.labels.set(labels)
             page += 1
 
 def fetch_all_labels():
@@ -51,4 +53,4 @@ def fetch_all_labels():
 
 if __name__ == "__main__":
     fetch_all_labels()
-    # fetch_all_issues()
+    fetch_all_issues()

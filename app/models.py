@@ -16,7 +16,7 @@ class Issue(models.Model):
     events_url = models.URLField(max_length=200)
     html_url = models.URLField(max_length=200)
     id = models.AutoField(primary_key=True)
-    labels = models.JSONField()  # JSONField를 이용해서 리스트 저장
+    labels = models.ManyToManyField('Label', related_name='issues')
     labels_url = models.URLField(max_length=200)
     locked = models.BooleanField()
     milestone = models.CharField(max_length=200, null=True, blank=True)
