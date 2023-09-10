@@ -2,6 +2,7 @@ import httpx
 import os
 import django
 django.setup()
+import copy
 
 from app.models import Issue
 
@@ -26,6 +27,7 @@ def fetch_all_issues():
 
             print(page)
             for issue_data in issues:
+                issue_data['data_json'] = copy.deepcopy(issue_data)
                 issue, _ = Issue.objects.get_or_create(
                     id=issue_data.pop("id"),
                     defaults=issue_data
