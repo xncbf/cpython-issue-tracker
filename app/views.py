@@ -11,7 +11,7 @@ api = NinjaAPI()
 @paginate
 def list_issues(request, filters: IssueFilterSchema = Query(...)):
     q = filters.get_filter_expression()
-    queryset = Issue.objects.all(q).order_by("-id")
+    queryset = Issue.objects.filter(q).order_by("-id")
     return queryset
 
 @api.get("/issues/{issue_id}", response={200: IssueSchema})
