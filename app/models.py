@@ -37,3 +37,17 @@ class Issue(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class Label(models.Model):
+    color = models.CharField(max_length=6)
+    data_json = models.JSONField(null=True, blank=True)
+    default = models.BooleanField()
+    description = models.TextField(null=True, blank=True)
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=200)
+    node_id = models.CharField(max_length=100)
+    url = models.URLField(max_length=200)
+
+    def __str__(self):
+        return self.name

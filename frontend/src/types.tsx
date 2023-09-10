@@ -13,7 +13,7 @@ export type Issue = {
     state: string;
     reactions: {};
     performed_via_github_app: string | null;
-    assignee: {} | null;
+    assignee: User | null;
     created_at: Date;
     state_reason: string | null;
     body: string | null;
@@ -27,7 +27,7 @@ export type Issue = {
     pull_request: {} | null;
     user: User;
     active_lock_reason: string | null;
-    assignees: [];
+    assignees: [User];
     events_url: string;
     url: string;
 };

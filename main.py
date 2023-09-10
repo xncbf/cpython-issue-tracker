@@ -4,7 +4,7 @@ import django
 django.setup()
 import copy
 
-from app.models import Issue
+from app.models import Issue, Label
 
 GITHUB_API_URL = "https://api.github.com/repos/python/cpython/issues"
 HEADERS = {
@@ -34,6 +34,21 @@ def fetch_all_issues():
                 )
             page += 1
 
+def fetch_all_labels():
+    with httpx.Client() as client:
+        response = client.get("https://api.github.com/repos/python/cpython/labels", headers=HEADERS, params={'per_page': 100})
+        if response.status_code != 200:
+            print(response.status_code, response.text)
+
+        labels = response.json()
+
+        for label_data in labels:
+            label_data['data_json'] = copy.deepcopy(label_data)
+            label, _ = Label.objects.get_or_create(
+                id=label_data.pop("id"),
+                defaults=label_data
+            )
 
 if __name__ == "__main__":
-    fetch_all_issues()
+    fetch_all_labels()
+    # fetch_all_issues()
