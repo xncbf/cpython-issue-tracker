@@ -64,3 +64,18 @@ class IssueFilterSchema(FilterSchema):
     updated_at: datetime | None
     url: str | None
     user: dict | None
+
+
+class LabelSchema(Schema):
+    color: str
+    data_json: dict | None = None
+    default: bool
+    description: str | None = None
+    id: int
+    name: str
+    node_id: str
+    url: str
+
+
+class LabelFilterSchema(FilterSchema):
+    name: str | None = Field(q='name__icontains')
