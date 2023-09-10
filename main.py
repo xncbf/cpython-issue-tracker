@@ -7,7 +7,7 @@ from app.models import Issue
 
 GITHUB_API_URL = "https://api.github.com/repos/python/cpython/issues"
 HEADERS = {
-    "Accept": "application/vnd.github.v3+json",
+    "Accept": "application/json",
     "Authorization": f"Bearer {os.environ['GITHUB_TOKEN']}"
 }
 

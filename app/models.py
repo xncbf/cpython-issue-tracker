@@ -33,6 +33,7 @@ class Issue(models.Model):
     updated_at = models.DateTimeField()
     url = models.URLField(max_length=200)
     user = models.JSONField()
+    
 
     def __str__(self):
         return self.title
