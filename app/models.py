@@ -70,7 +70,7 @@ class User(models.Model):
     repos_url = models.URLField()
     events_url = models.URLField()
     received_events_url = models.URLField()
-    user_type = models.CharField(max_length=100)  # `type`은 Python의 예약어이므로 다른 이름을 사용
+    type = models.CharField(max_length=100)
     site_admin = models.BooleanField()
     
     def __str__(self):
