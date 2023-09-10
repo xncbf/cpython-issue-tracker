@@ -5,13 +5,14 @@ import {
     Select, MenuItem, FormControlLabel, FormControl, InputLabel, Grid
 } from '@mui/material';
 import axios from 'axios';
-import { Issue, IssueAPIResponse } from './types';
+import { Issue, IssueAPIResponse, Label, LabelAPIResponse } from './types';
 
 function IssueList() {
     const [issues, setIssues] = useState<Issue[]>([]);
     const [filter, setFilter] = useState('');
     const [stateFilter, setStateFilter] = useState('');
-    const [labelFilter, setLabelFilter] = useState([]);
+    const [labels, setLabels] = useState<Label[]>([]);
+    const [labelFilter, setLabelFilter] = useState<string[]>([]);
     const [createdDateFilter, setCreatedDateFilter] = useState(null);
     const [commentsFilter, setCommentsFilter] = useState(null);
     const [assigneeFilter, setAssigneeFilter] = useState('');
@@ -24,6 +25,7 @@ function IssueList() {
 
     useEffect(() => {
         fetchIssues();
+        fetchLabels();
         window.addEventListener('scroll', handleScroll);
         return () => {
             window.removeEventListener('scroll', handleScroll);
@@ -64,6 +66,15 @@ function IssueList() {
         }
     };
 
+    const fetchLabels = async () => {
+        try {
+            const response = await axios.get<LabelAPIResponse>('http://localhost:8000/api/labels/');
+            setLabels(response.data.items);
+        } catch (error) {
+            console.error("Error fetching labels:", error);
+        }
+    };
+    const filteredLabels = labels.filter(label => labelFilter.includes(label.name));
     const handleScroll = useCallback(() => {
         if (window.innerHeight + document.documentElement.scrollTop !== document.documentElement.offsetHeight) return;
         fetchIssues();
@@ -147,9 +158,9 @@ function IssueList() {
                             onChange={handleFilterChange}
                             label="Labels"
                         >
-                            {["bug", "enhancement", "documentation"].map(label => (
-                                <MenuItem key={label} value={label}>
-                                    {label}
+                            {filteredLabels.map(label => (
+                                <MenuItem key={label.id} value={label.id}>
+                                    {label.name}
                                 </MenuItem>
                             ))}
                         </Select>

@@ -39,6 +39,23 @@ export type IssueAPIResponse = {
     items: Issue[];
 };
 
+export type LabelAPIResponse = {
+    count: number;
+    next: string | null;
+    previous: string | null;
+    items: Label[];
+};
+
+export type Label = {
+    id: number;
+    node_id: string;
+    url: string;
+    name: string;
+    description: string | null;
+    color: string;
+    default: boolean;
+};
+
 type User = {
     login: string;
     id: number;
