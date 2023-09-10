@@ -60,7 +60,7 @@ class IssueFilterSchema(FilterSchema):
     state: str | None
     state_reason: str | None
     timeline_url: str | None
-    title: str | None = Field(q='name__icontains')
+    title: str | None = Field(q='title__icontains')
     updated_at: datetime | None
     url: str | None
     user: dict | None
