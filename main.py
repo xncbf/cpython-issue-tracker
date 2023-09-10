@@ -33,6 +33,7 @@ def fetch_all_issues():
                     id=issue_data.pop("id"),
                     defaults=issue_data
                 )
+                labels = [Label.objects.get(id=label['id']) for label in labels]
                 issue.labels.set(labels)
             page += 1
 
