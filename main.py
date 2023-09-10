@@ -4,7 +4,7 @@ import django
 django.setup()
 import copy
 
-from app.models import Issue, Label
+from app.models import Issue, Label, User
 
 GITHUB_API_URL = "https://api.github.com/repos/python/cpython/issues"
 HEADERS = {
@@ -29,6 +29,12 @@ def fetch_all_issues():
             for issue_data in issues:
                 issue_data['data_json'] = copy.deepcopy(issue_data)
                 labels = issue_data.pop("labels")
+                users = issue_data.pop("user")
+                user, _ = User.objects.get_or_create(
+                    id=users.pop("id"),
+                    defaults=users
+                )
+                issue_data['user'] = user
                 issue, _ = Issue.objects.get_or_create(
                     id=issue_data.pop("id"),
                     defaults=issue_data

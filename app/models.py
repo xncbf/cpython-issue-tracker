@@ -32,7 +32,7 @@ class Issue(models.Model):
     title = models.CharField(max_length=200)
     updated_at = models.DateTimeField()
     url = models.URLField(max_length=200)
-    user = models.JSONField()
+    user = models.ForeignKey('User', on_delete=models.CASCADE)
     
 
     def __str__(self):
@@ -51,3 +51,27 @@ class Label(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class User(models.Model):
+    login = models.CharField(max_length=100)
+    id = models.AutoField(primary_key=True)
+    node_id = models.CharField(max_length=100, unique=True)
+    avatar_url = models.URLField()
+    gravatar_id = models.CharField(max_length=100, blank=True)  # 고유한 값이라고 지정되지 않았으므로 unique=False
+    url = models.URLField()
+    html_url = models.URLField()
+    followers_url = models.URLField()
+    following_url = models.URLField()
+    gists_url = models.URLField()
+    starred_url = models.URLField()
+    subscriptions_url = models.URLField()
+    organizations_url = models.URLField()
+    repos_url = models.URLField()
+    events_url = models.URLField()
+    received_events_url = models.URLField()
+    user_type = models.CharField(max_length=100)  # `type`은 Python의 예약어이므로 다른 이름을 사용
+    site_admin = models.BooleanField()
+    
+    def __str__(self):
+        return self.login
