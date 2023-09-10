@@ -74,7 +74,10 @@ function IssueList() {
             console.error("Error fetching labels:", error);
         }
     };
-    const filteredLabels = labels.filter(label => labelFilter.includes(label.name));
+    const filteredLabels = labelFilter.length > 0 ? 
+                       labels.filter(label => labelFilter.includes(label.name)) : 
+                       labels;
+
     const handleScroll = useCallback(() => {
         if (window.innerHeight + document.documentElement.scrollTop !== document.documentElement.offsetHeight) return;
         fetchIssues();
