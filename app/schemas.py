@@ -3,6 +3,41 @@ from datetime import datetime
 from ninja import Field, FilterSchema, Schema
 
 
+class UserSchema(Schema):
+    avatar_url: str
+    events_url: str
+    followers_url: str
+    following_url: str
+    gists_url: str
+    gravatar_id: str
+    html_url: str
+    id: int
+    login: str
+    node_id: str
+    organizations_url: str
+    received_events_url: str
+    repos_url: str
+    site_admin: bool
+    starred_url: str
+    subscriptions_url: str
+    type: str
+    url: str
+
+
+class LabelSchema(Schema):
+    color: str
+    default: bool
+    description: str | None = None
+    id: int
+    name: str
+    node_id: str
+    url: str
+
+
+class LabelFilterSchema(FilterSchema):
+    name: str | None = Field(q="name__icontains")
+
+
 class IssueSchema(Schema):
     active_lock_reason: str | None = None
     assignee: dict | None = None
@@ -17,7 +52,7 @@ class IssueSchema(Schema):
     events_url: str
     html_url: str
     id: int
-    labels: list
+    labels: list[LabelSchema]
     labels_url: str
     locked: bool
     milestone: str | None = None
@@ -33,7 +68,7 @@ class IssueSchema(Schema):
     title: str
     updated_at: datetime
     url: str
-    user: dict
+    user: UserSchema
 
 
 class IssueFilterSchema(FilterSchema):
@@ -67,18 +102,3 @@ class IssueFilterSchema(FilterSchema):
     updated_at: datetime | None
     url: str | None
     user: dict | None
-
-
-class LabelSchema(Schema):
-    color: str
-    data_json: dict | None = None
-    default: bool
-    description: str | None = None
-    id: int
-    name: str
-    node_id: str
-    url: str
-
-
-class LabelFilterSchema(FilterSchema):
-    name: str | None = Field(q="name__icontains")

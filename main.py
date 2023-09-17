@@ -1,13 +1,11 @@
-import copy
 import os
 
 import django
 import httpx
 
-from app.models import Issue, Label, User
-
 django.setup()
 
+from app.models import Issue, Label, User  # noqa
 
 GITHUB_API_URL = "https://api.github.com/repos/python/cpython/issues"
 HEADERS = {
@@ -35,12 +33,27 @@ def fetch_all_issues():
 
             print(page)
             for issue_data in issues:
-                issue_data["data_json"] = copy.deepcopy(issue_data)
                 labels = issue_data.pop("labels")
-                users = issue_data.pop("user")
-                user, _ = User.objects.get_or_create(id=users.pop("id"), defaults=users)
+                assignee = issue_data.pop("assignee", None)
+                if assignee:
+                    user, _ = User.objects.get_or_create(id=assignee.pop("id"), defaults=assignee)
+                    issue_data["assignee"] = user
+                assignees = issue_data.pop("assignees", None)
+                pull_request = issue_data.pop("pull_request", None)
+                if pull_request:
+                    issue_data["is_issue"] = False
+                user = issue_data.pop("user")
+                user, _ = User.objects.get_or_create(id=user.pop("id"), defaults=user)
                 issue_data["user"] = user
+
                 issue, _ = Issue.objects.get_or_create(id=issue_data.pop("id"), defaults=issue_data)
+                if assignees:
+                    issue.assignees.set(
+                        [
+                            User.objects.get_or_create(id=assignee.pop("id"), defaults=assignee)[0]
+                            for assignee in assignees
+                        ]
+                    )
                 labels = [Label.objects.get(id=label["id"]) for label in labels]
                 issue.labels.set(labels)
             page += 1
@@ -59,7 +72,6 @@ def fetch_all_labels():
         labels = response.json()
 
         for label_data in labels:
-            label_data["data_json"] = copy.deepcopy(label_data)
             label, _ = Label.objects.get_or_create(id=label_data.pop("id"), defaults=label_data)
 
 
