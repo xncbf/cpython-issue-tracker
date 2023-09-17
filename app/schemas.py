@@ -40,8 +40,8 @@ class LabelFilterSchema(FilterSchema):
 
 class IssueSchema(Schema):
     active_lock_reason: str | None = None
-    assignee: dict | None = None
-    assignees: list
+    assignee: UserSchema | None = None
+    assignees: list[UserSchema]
     author_association: str
     body: str | None = None
     closed_at: datetime | None = None
@@ -73,8 +73,8 @@ class IssueSchema(Schema):
 
 class IssueFilterSchema(FilterSchema):
     active_lock_reason: str | None
-    assignee: dict | None
-    assignees: list | None
+    assignee_id: int | None
+    assignees: list[int] | None
     author_association: str | None
     body: str | None
     closed_at: datetime | None
@@ -85,20 +85,20 @@ class IssueFilterSchema(FilterSchema):
     events_url: str | None
     html_url: str | None
     id: int | None
-    labels: list | None
+    labels: list[int] = Field(q="labels__id__in", default=None)
     labels_url: str | None
     locked: bool | None
     milestone: str | None
     node_id: str | None
     number: int | None
     performed_via_github_app: str | None
-    pull_request: dict | None
+    pull_request_id: int | None
     reactions: dict | None
     repository_url: str | None
     state: str | None
     state_reason: str | None
     timeline_url: str | None
-    title: str | None = Field(q="title__icontains")
+    search: str | None = Field(q=["title__icontains", "body__icontains"])
     updated_at: datetime | None
     url: str | None
-    user: dict | None
+    user_id: int | None

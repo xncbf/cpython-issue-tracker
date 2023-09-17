@@ -9,7 +9,7 @@ import { Issue, IssueAPIResponse, Label, LabelAPIResponse } from './types';
 
 function IssueList() {
     const [issues, setIssues] = useState<Issue[]>([]);
-    const [filter, setFilter] = useState('');
+    const [filter, setSearchFilter] = useState('');
     const [stateFilter, setStateFilter] = useState('');
     const [labels, setLabels] = useState<Label[]>([]);
     const [labelFilter, setLabelFilter] = useState<string[]>([]);
@@ -34,7 +34,7 @@ function IssueList() {
 
     const fetchIssues = async (isSearch = false) => {
         let apiUrl = `http://localhost:8000/api/issues/?limit=${limit}&offset=${offsetRef.current}`;
-        apiUrl += filter ? `&title=${filter}` : '';
+        apiUrl += filter ? `&search=${filter}` : '';
         apiUrl += stateFilter ? `&state=${stateFilter}` : '';
         apiUrl += labelFilter.length > 0 ? `&labels=${labelFilter.join(',')}` : '';
         apiUrl += createdDateFilter ? `&created_at=${createdDateFilter}` : '';
@@ -86,8 +86,8 @@ function IssueList() {
     const handleFilterChange = (event: any) => {
         const { name, value } = event.target;
         switch(name) {
-            case 'title':
-                setFilter(value);
+            case 'search':
+                setSearchFilter(value);
                 break;
             case 'state':
                 setStateFilter(value);
@@ -132,8 +132,8 @@ function IssueList() {
                     gap: 2
                 }}>
                     <TextField
-                        name="title"
-                        label="Search by title"
+                        name="search"
+                        label="Search by title and body"
                         variant="outlined"
                         value={filter}
                         onChange={handleFilterChange}
