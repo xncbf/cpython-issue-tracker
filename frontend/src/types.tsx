@@ -18,13 +18,13 @@ export type Issue = {
     state_reason: string | null;
     body: string | null;
     locked: boolean;
-    labels: [];
+    labels: [Label];
     milestone: string | null;
     labels_url: string;
     number: number;
     node_id: string;
     author_association: string;
-    pull_request: {} | null;
+    pull_request: PullRequest | null;
     user: User;
     active_lock_reason: string | null;
     assignees: [User];
@@ -75,4 +75,12 @@ type User = {
     received_events_url: string;
     type: string;
     site_admin: boolean;
-}
+};
+
+type PullRequest = {
+    url: string;
+    html_url: string;
+    diff_url: string;
+    patch_url: string;
+    merged_at: string | null;
+};

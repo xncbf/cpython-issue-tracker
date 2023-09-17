@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import {
-    List, ListItem, ListItemText, ListItemAvatar, Typography,
+    List, ListItem, ListItemText, Chip, Typography,
     Container, Box, Divider, Avatar, ListItemButton, TextField,
     Select, MenuItem, FormControlLabel, FormControl, InputLabel, Grid
 } from '@mui/material';
@@ -188,8 +188,23 @@ function IssueList() {
                                     }}
                                 >
                                     <Box display="flex" flexDirection="column">
-                                        <ListItemText primary={issue.title} />
-                                        <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>#{issue.number} opened {issue.created_at.toString()} by {issue.user.login}</Typography>
+                                        <ListItemText
+                                        primary={(
+                                            <>
+                                            {issue.title}
+                                            {issue.labels && issue.labels.map(label => (
+                                                <Chip key={label.id} label={label.name} sx={{
+                                                    ml: 1,
+                                                    backgroundColor: `#${label.color}`,
+                                                    color: '#000000'
+                                                }} size="small"/>
+                                            ))}
+                                            </>
+                                        )}
+                                        />
+                                        <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
+                                            #{issue.number} opened {issue.created_at.toString()} by {issue.user.login}
+                                        </Typography>
                                     </Box>
                                 </ListItemButton>
                             </ListItem>

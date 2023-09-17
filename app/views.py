@@ -9,9 +9,13 @@ api = NinjaAPI()
 
 @api.get("/issues/", response={200: list[IssueSchema]})
 @paginate
-def list_issues(request, filters: IssueFilterSchema = Query(...)):
+def list_issues(request, labels: list[int] = Query(...), filters: IssueFilterSchema = Query(...)):
+    queryset = Issue.objects.all()
+    if labels:
+        for label in labels:
+            queryset = queryset.filter(labels=label)
     q = filters.get_filter_expression()
-    queryset = Issue.objects.filter(q).order_by("-id")
+    queryset.filter(is_issue=True).filter(q).order_by("-id")
     return queryset
 
 
