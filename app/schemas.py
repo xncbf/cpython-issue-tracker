@@ -1,5 +1,7 @@
-from ninja import Schema, FilterSchema, Field
 from datetime import datetime
+
+from ninja import Field, FilterSchema, Schema
+
 
 class IssueSchema(Schema):
     active_lock_reason: str | None = None
@@ -33,6 +35,7 @@ class IssueSchema(Schema):
     url: str
     user: dict
 
+
 class IssueFilterSchema(FilterSchema):
     active_lock_reason: str | None
     assignee: dict | None
@@ -60,7 +63,7 @@ class IssueFilterSchema(FilterSchema):
     state: str | None
     state_reason: str | None
     timeline_url: str | None
-    title: str | None = Field(q='title__icontains')
+    title: str | None = Field(q="title__icontains")
     updated_at: datetime | None
     url: str | None
     user: dict | None
@@ -78,4 +81,4 @@ class LabelSchema(Schema):
 
 
 class LabelFilterSchema(FilterSchema):
-    name: str | None = Field(q='name__icontains')
+    name: str | None = Field(q="name__icontains")

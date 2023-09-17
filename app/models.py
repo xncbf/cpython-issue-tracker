@@ -16,7 +16,7 @@ class Issue(models.Model):
     events_url = models.URLField(max_length=200)
     html_url = models.URLField(max_length=200)
     id = models.AutoField(primary_key=True)
-    labels = models.ManyToManyField('Label', related_name='issues')
+    labels = models.ManyToManyField("Label", related_name="issues")
     labels_url = models.URLField(max_length=200)
     locked = models.BooleanField()
     milestone = models.CharField(max_length=200, null=True, blank=True)
@@ -32,8 +32,7 @@ class Issue(models.Model):
     title = models.CharField(max_length=200)
     updated_at = models.DateTimeField()
     url = models.URLField(max_length=200)
-    user = models.ForeignKey('User', on_delete=models.CASCADE)
-    
+    user = models.ForeignKey("User", on_delete=models.CASCADE)
 
     def __str__(self):
         return self.title
@@ -72,6 +71,6 @@ class User(models.Model):
     received_events_url = models.URLField()
     type = models.CharField(max_length=100)
     site_admin = models.BooleanField()
-    
+
     def __str__(self):
         return self.login

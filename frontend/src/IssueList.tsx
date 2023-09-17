@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import {
-    List, ListItem, ListItemText, ListItemAvatar, Typography, 
+    List, ListItem, ListItemText, ListItemAvatar, Typography,
     Container, Box, Divider, Avatar, ListItemButton, TextField,
     Select, MenuItem, FormControlLabel, FormControl, InputLabel, Grid
 } from '@mui/material';
@@ -18,7 +18,7 @@ function IssueList() {
     const [assigneeFilter, setAssigneeFilter] = useState('');
     const [lockedFilter, setLockedFilter] = useState(null);
     const [draftFilter, setDraftFilter] = useState(null);
-    
+
     const offsetRef = useRef(0);
     const limit = 20;
     const abortController = new AbortController();
@@ -74,8 +74,8 @@ function IssueList() {
             console.error("Error fetching labels:", error);
         }
     };
-    const filteredLabels = labelFilter.length > 0 ? 
-                       labels.filter(label => labelFilter.includes(label.name)) : 
+    const filteredLabels = labelFilter.length > 0 ?
+                       labels.filter(label => labelFilter.includes(label.name)) :
                        labels;
 
     const handleScroll = useCallback(() => {
@@ -174,10 +174,10 @@ function IssueList() {
                     {issues.map((issue, index) => (
                         <React.Fragment key={issue.id}>
                             <ListItem disablePadding>
-                                <ListItemButton 
-                                    component="a" 
-                                    href={issue.html_url} 
-                                    target="_blank" 
+                                <ListItemButton
+                                    component="a"
+                                    href={issue.html_url}
+                                    target="_blank"
                                     rel="noopener noreferrer"
                                     sx={{
                                         width: '100%',

@@ -6,7 +6,7 @@ import sys
 
 def main():
     """Run administrative tasks."""
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'cpython_issue_tracker.settings')
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "cpython_issue_tracker.settings")
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:
@@ -16,9 +16,9 @@ def main():
             "forget to activate a virtual environment?"
         ) from exc
     # execute_from_command_line(sys.argv)
-    
+
     try:
-        if sys.argv[2] == 'react':
+        if sys.argv[2] == "react":
             project_root = os.getcwd()
             os.chdir(os.path.join(project_root, "frontend"))
             os.system("npm run build")
@@ -30,5 +30,5 @@ def main():
         execute_from_command_line(sys.argv)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

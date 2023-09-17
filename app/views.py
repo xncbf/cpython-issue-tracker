@@ -1,8 +1,8 @@
-from .models import Issue, Label
-from .schemas import IssueSchema, IssueFilterSchema, LabelSchema, LabelFilterSchema
+from ninja import NinjaAPI, Query
 from ninja.pagination import paginate
 
-from ninja import NinjaAPI, Query
+from .models import Issue, Label
+from .schemas import IssueFilterSchema, IssueSchema, LabelFilterSchema, LabelSchema
 
 api = NinjaAPI()
 
@@ -14,9 +14,11 @@ def list_issues(request, filters: IssueFilterSchema = Query(...)):
     queryset = Issue.objects.filter(q).order_by("-id")
     return queryset
 
+
 @api.get("/issues/{issue_id}", response={200: IssueSchema})
 def get_issue(request, issue_id: int):
     return Issue.objects.get(id=issue_id)
+
 
 @api.get("/labels/", response={200: list[LabelSchema]})
 @paginate
