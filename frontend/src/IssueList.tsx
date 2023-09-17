@@ -36,7 +36,9 @@ function IssueList() {
         let apiUrl = `http://localhost:8000/api/issues/?limit=${limit}&offset=${offsetRef.current}`;
         apiUrl += filter ? `&search=${filter}` : '';
         apiUrl += stateFilter ? `&state=${stateFilter}` : '';
-        apiUrl += labelFilter.length > 0 ? `&labels=${labelFilter.join(',')}` : '';
+        if (labelFilter.length > 0) {
+            apiUrl += '&' + labelFilter.map(label => `labels=${label}`).join('&');
+        }
         apiUrl += createdDateFilter ? `&created_at=${createdDateFilter}` : '';
         apiUrl += commentsFilter ? `&comments=${commentsFilter}` : '';
         apiUrl += assigneeFilter ? `&assignee=${assigneeFilter}` : '';
@@ -74,9 +76,7 @@ function IssueList() {
             console.error("Error fetching labels:", error);
         }
     };
-    const filteredLabels = labelFilter.length > 0 ?
-                       labels.filter(label => labelFilter.includes(label.name)) :
-                       labels;
+    const filteredLabels = labels;
 
     const handleScroll = useCallback(() => {
         if (window.innerHeight + document.documentElement.scrollTop !== document.documentElement.offsetHeight) return;

@@ -85,7 +85,7 @@ class IssueFilterSchema(FilterSchema):
     events_url: str | None
     html_url: str | None
     id: int | None
-    labels: list[int] = Field(q="labels__id__in", default=None)
+    labels: list[int] = Field(q="labels__id__in", default=None, expression_connector="or")
     labels_url: str | None
     locked: bool | None
     milestone: str | None
