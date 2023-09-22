@@ -17,7 +17,9 @@ import {
   FormControl,
   InputLabel,
   Grid,
+  Autocomplete,
 } from '@mui/material';
+
 import axios from 'axios';
 import { Issue, IssueAPIResponse, Label, LabelAPIResponse } from './types';
 
@@ -101,7 +103,6 @@ function IssueList() {
       console.error('Error fetching labels:', error);
     }
   };
-  const filteredLabels = labels;
 
   const handleScroll = useCallback(() => {
     if (
@@ -111,7 +112,12 @@ function IssueList() {
       return;
     fetchIssues();
   }, [offsetRef, filter]);
-
+  const handleAutocompleteChange = (event: any, newValue: readonly Label[]) => {
+    setLabelFilter(newValue.map(label => label.id.toString()));
+    offsetRef.current = 0;
+    setIssues([]);
+    fetchIssues(true);
+  };
   const handleFilterChange = (event: any) => {
     const { name, value } = event.target;
     switch (name) {
@@ -122,7 +128,7 @@ function IssueList() {
         setStateFilter(value);
         break;
       case 'labels':
-        setLabelFilter(value as string[]);
+        // setLabelFilter(value as string[]);
         break;
       case 'createdDate':
         setCreatedDateFilter(value);
@@ -171,35 +177,22 @@ function IssueList() {
             sx={{ flex: 2 }}
           />
           <FormControl variant="outlined" sx={{ flex: 1 }}>
-            <InputLabel>Status</InputLabel>
-            <Select
-              name="state"
-              value={stateFilter}
-              onChange={handleFilterChange}
-              label="Status"
-            >
-              <MenuItem value="">
-                <em>All</em>
-              </MenuItem>
-              <MenuItem value="open">Open</MenuItem>
-              <MenuItem value="closed">Closed</MenuItem>
-            </Select>
-          </FormControl>
-          <FormControl variant="outlined" sx={{ flex: 1 }}>
-            <InputLabel>Labels</InputLabel>
-            <Select
-              name="labels"
-              multiple
-              value={labelFilter}
-              onChange={handleFilterChange}
-              label="Labels"
-            >
-              {filteredLabels.map((label) => (
-                <MenuItem key={label.id} value={label.id}>
-                  {label.name}
-                </MenuItem>
-              ))}
-            </Select>
+          <Autocomplete
+            multiple
+            id="labels-autocomplete"
+            options={labels}
+            getOptionLabel={(option) => option.name}
+            value={labels.filter(label => labelFilter.includes(label.id.toString()))}
+            onChange={handleAutocompleteChange}
+            renderInput={(params) => (
+              <TextField {...params} variant="outlined" placeholder="레이블 검색..." name="labels" />
+            )}
+            renderTags={(value, getTagProps) =>
+              value.map((option, index) => (
+                <Chip variant="outlined" label={option.name} {...getTagProps({ index })} />
+              ))
+            }
+          />
           </FormControl>
         </Box>
 
