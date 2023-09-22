@@ -154,7 +154,7 @@ function IssueList() {
                 <TextField
                   {...params}
                   variant="outlined"
-                  placeholder="레이블 검색..."
+                  placeholder="Search labels..."
                   name="labels"
                 />
               )}
