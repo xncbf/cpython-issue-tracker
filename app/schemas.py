@@ -78,6 +78,7 @@ class IssueFilterSchema(FilterSchema):
     author_association: str | None
     body: str | None
     closed_at: datetime | None
+    is_open: bool | None = Field(q="closed_at__isnull")
     comments: int | None
     comments_url: str | None
     created_at: datetime | None

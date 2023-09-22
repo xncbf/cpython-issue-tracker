@@ -15,6 +15,9 @@ import {
   FormControlLabel,
   FormControl,
   Autocomplete,
+  InputLabel,
+  Select,
+  MenuItem,
 } from '@mui/material';
 
 import axios from 'axios';
@@ -25,7 +28,9 @@ function IssueList() {
   const [filter, setSearchFilter] = useState('');
   const [labels, setLabels] = useState<Label[]>([]);
   const [labelFilter, setLabelFilter] = useState<string[]>([]);
-  const [issueFilter, setIssueFilter] = useState('issue');
+  const [issueFilter, setIssueFilter] = useState('ISSUE');
+  const [issueStatus, setIssueStatus] = useState<'ALL' | 'OPEN' | 'CLOSED'>('OPEN');
+
 
   const offsetRef = useRef(0);
   const limit = 20;
@@ -38,7 +43,7 @@ function IssueList() {
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, [filter, labelFilter, issueFilter]);
+  }, [filter, labelFilter, issueFilter, issueStatus]);
 
   const fetchIssues = async (isSearch = false) => {
     let apiUrl = `http://localhost:8000/api/issues/?limit=${limit}&offset=${offsetRef.current}`;
@@ -46,11 +51,14 @@ function IssueList() {
     if (labelFilter.length > 0) {
       apiUrl += '&' + labelFilter.map((label) => `labels=${label}`).join('&');
     }
-    if (issueFilter !== 'all') {
-      const isIssue = issueFilter === 'issue' ? true : false;
+    if (issueFilter !== 'ALL') {
+      const isIssue = issueFilter === 'ISSUE' ? true : false;
       apiUrl += issueFilter ? `&is_issue=${isIssue}` : '';
     }
-
+    if (issueStatus !== 'ALL') {
+      const is_open = issueStatus === 'CLOSED' ? false : true;
+      apiUrl += issueStatus ? `&is_open=${is_open}` : '';
+    }
     if (isSearch) {
       abortController.abort();
     }
@@ -108,6 +116,9 @@ function IssueList() {
         break;
       case 'is_issue':
         setIssueFilter(value);
+        break;
+      case 'status':
+        setIssueStatus(value);
         break;
       default:
         break;
@@ -169,21 +180,47 @@ function IssueList() {
               }
             />
           </FormControl>
+          <FormControl variant="outlined" sx={{ flex: 1 }}>
+            <InputLabel id="issue-type-filter-label">Type</InputLabel>
+            <Select
+              labelId="issue-type-filter-label"
+              id="issue-type-filter"
+              value={issueFilter}
+              label="issue-type"
+              onChange={handleFilterChange}
+              name="is_issue"
+            >
+              <MenuItem value="ALL">All</MenuItem>
+              <MenuItem value="ISSUE">Issue</MenuItem>
+              <MenuItem value="PULL REQUEST">Pull Request</MenuItem>
+            </Select>
+          </FormControl>
+        </Box>
 
-          <RadioGroup
-            row
-            value={issueFilter}
-            onChange={handleFilterChange}
-            name="is_issue"
-          >
-            <FormControlLabel value="all" control={<Radio />} label="All" />
-            <FormControlLabel value="issue" control={<Radio />} label="Issue" />
-            <FormControlLabel
-              value="pull reqeust"
-              control={<Radio />}
-              label="Pull Request"
-            />
-          </RadioGroup>
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'row',
+            mb: 3,
+            justifyContent: 'space-between',
+            gap: 2,
+          }}
+        >
+          <FormControl variant="outlined" sx={{ flex: 1 }}>
+            <InputLabel id="issue-status-label">status</InputLabel>
+            <Select
+              labelId="issue-status-label"
+              id="issue-status"
+              value={issueStatus}
+              label="status"
+              name="status"
+              onChange={handleFilterChange}
+            >
+              <MenuItem value="ALL">All</MenuItem>
+              <MenuItem value="OPEN">Open</MenuItem>
+              <MenuItem value="CLOSED">Closed</MenuItem>
+            </Select>
+          </FormControl>
         </Box>
 
         <List>
