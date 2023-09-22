@@ -26,14 +26,8 @@ import { Issue, IssueAPIResponse, Label, LabelAPIResponse } from './types';
 function IssueList() {
   const [issues, setIssues] = useState<Issue[]>([]);
   const [filter, setSearchFilter] = useState('');
-  const [stateFilter, setStateFilter] = useState('');
   const [labels, setLabels] = useState<Label[]>([]);
   const [labelFilter, setLabelFilter] = useState<string[]>([]);
-  const [createdDateFilter, setCreatedDateFilter] = useState(null);
-  const [commentsFilter, setCommentsFilter] = useState(null);
-  const [assigneeFilter, setAssigneeFilter] = useState('');
-  const [lockedFilter, setLockedFilter] = useState(null);
-  const [draftFilter, setDraftFilter] = useState(null);
 
   const offsetRef = useRef(0);
   const limit = 20;
@@ -48,27 +42,15 @@ function IssueList() {
     };
   }, [
     filter,
-    stateFilter,
     labelFilter,
-    createdDateFilter,
-    commentsFilter,
-    assigneeFilter,
-    lockedFilter,
-    draftFilter,
   ]);
 
   const fetchIssues = async (isSearch = false) => {
     let apiUrl = `http://localhost:8000/api/issues/?limit=${limit}&offset=${offsetRef.current}`;
     apiUrl += filter ? `&search=${filter}` : '';
-    apiUrl += stateFilter ? `&state=${stateFilter}` : '';
     if (labelFilter.length > 0) {
       apiUrl += '&' + labelFilter.map((label) => `labels=${label}`).join('&');
     }
-    apiUrl += createdDateFilter ? `&created_at=${createdDateFilter}` : '';
-    apiUrl += commentsFilter ? `&comments=${commentsFilter}` : '';
-    apiUrl += assigneeFilter ? `&assignee=${assigneeFilter}` : '';
-    apiUrl += lockedFilter !== null ? `&locked=${lockedFilter}` : '';
-    apiUrl += draftFilter !== null ? `&draft=${draftFilter}` : '';
 
     if (isSearch) {
       abortController.abort();
@@ -112,6 +94,7 @@ function IssueList() {
       return;
     fetchIssues();
   }, [offsetRef, filter]);
+
   const handleAutocompleteChange = (event: any, newValue: readonly Label[]) => {
     setLabelFilter(newValue.map(label => label.id.toString()));
     offsetRef.current = 0;
@@ -124,26 +107,8 @@ function IssueList() {
       case 'search':
         setSearchFilter(value);
         break;
-      case 'state':
-        setStateFilter(value);
-        break;
       case 'labels':
         // setLabelFilter(value as string[]);
-        break;
-      case 'createdDate':
-        setCreatedDateFilter(value);
-        break;
-      case 'comments':
-        setCommentsFilter(value);
-        break;
-      case 'assignee':
-        setAssigneeFilter(value);
-        break;
-      case 'locked':
-        setLockedFilter(value);
-        break;
-      case 'draft':
-        setDraftFilter(value);
         break;
       default:
         break;
