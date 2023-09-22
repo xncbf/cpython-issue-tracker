@@ -12,12 +12,8 @@ import {
   Radio,
   ListItemButton,
   TextField,
-  Select,
-  MenuItem,
   FormControlLabel,
   FormControl,
-  InputLabel,
-  Grid,
   Autocomplete,
 } from '@mui/material';
 
@@ -91,9 +87,9 @@ function IssueList() {
 
   const handleScroll = useCallback(() => {
     if (
-      window.innerHeight + document.documentElement.scrollTop !==
+      window.innerHeight + document.documentElement.scrollTop + 1 <
       document.documentElement.offsetHeight
-    )
+      )
       return;
     fetchIssues();
   }, [offsetRef, filter]);
