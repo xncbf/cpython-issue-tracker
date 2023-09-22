@@ -42,11 +42,7 @@ function IssueList() {
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, [
-    filter,
-    labelFilter,
-    issueFilter,
-  ]);
+  }, [filter, labelFilter, issueFilter]);
 
   const fetchIssues = async (isSearch = false) => {
     let apiUrl = `http://localhost:8000/api/issues/?limit=${limit}&offset=${offsetRef.current}`;
@@ -103,7 +99,7 @@ function IssueList() {
   }, [offsetRef, filter]);
 
   const handleAutocompleteChange = (event: any, newValue: readonly Label[]) => {
-    setLabelFilter(newValue.map(label => label.id.toString()));
+    setLabelFilter(newValue.map((label) => label.id.toString()));
     offsetRef.current = 0;
     setIssues([]);
     fetchIssues(true);
@@ -149,30 +145,49 @@ function IssueList() {
             sx={{ flex: 2 }}
           />
           <FormControl variant="outlined" sx={{ flex: 1 }}>
-          <Autocomplete
-            multiple
-            id="labels-autocomplete"
-            options={labels}
-            getOptionLabel={(option) => option.name}
-            value={labels.filter(label => labelFilter.includes(label.id.toString()))}
-            onChange={handleAutocompleteChange}
-            renderInput={(params) => (
-              <TextField {...params} variant="outlined" placeholder="레이블 검색..." name="labels" />
-            )}
-            renderTags={(value, getTagProps) =>
-              value.map((option, index) => (
-                <Chip variant="outlined" label={option.name} {...getTagProps({ index })} />
-              ))
-            }
-          />
+            <Autocomplete
+              multiple
+              id="labels-autocomplete"
+              options={labels}
+              getOptionLabel={(option) => option.name}
+              value={labels.filter((label) =>
+                labelFilter.includes(label.id.toString()),
+              )}
+              onChange={handleAutocompleteChange}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  variant="outlined"
+                  placeholder="레이블 검색..."
+                  name="labels"
+                />
+              )}
+              renderTags={(value, getTagProps) =>
+                value.map((option, index) => (
+                  <Chip
+                    variant="outlined"
+                    label={option.name}
+                    {...getTagProps({ index })}
+                  />
+                ))
+              }
+            />
           </FormControl>
 
-          <RadioGroup row value={issueFilter} onChange={handleFilterChange} name="is_issue">
+          <RadioGroup
+            row
+            value={issueFilter}
+            onChange={handleFilterChange}
+            name="is_issue"
+          >
             <FormControlLabel value="all" control={<Radio />} label="All" />
             <FormControlLabel value="issue" control={<Radio />} label="Issue" />
-            <FormControlLabel value="pull reqeust" control={<Radio />} label="Pull Request" />
+            <FormControlLabel
+              value="pull reqeust"
+              control={<Radio />}
+              label="Pull Request"
+            />
           </RadioGroup>
-
         </Box>
 
         <List>
