@@ -14,7 +14,7 @@ def list_issues(request, labels: list[int] = Query([]), filters: IssueFilterSche
     for label in labels:
         queryset = queryset.filter(labels=label)
     q = filters.get_filter_expression()
-    queryset = queryset.filter(is_issue=True).filter(q).order_by("-id")
+    queryset = queryset.filter(q).order_by("-id")
     return queryset
 
 

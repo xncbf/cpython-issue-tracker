@@ -8,7 +8,8 @@ import {
   Container,
   Box,
   Divider,
-  Avatar,
+  RadioGroup,
+  Radio,
   ListItemButton,
   TextField,
   Select,
@@ -28,6 +29,7 @@ function IssueList() {
   const [filter, setSearchFilter] = useState('');
   const [labels, setLabels] = useState<Label[]>([]);
   const [labelFilter, setLabelFilter] = useState<string[]>([]);
+  const [issueFilter, setIssueFilter] = useState('issue');
 
   const offsetRef = useRef(0);
   const limit = 20;
@@ -43,6 +45,7 @@ function IssueList() {
   }, [
     filter,
     labelFilter,
+    issueFilter,
   ]);
 
   const fetchIssues = async (isSearch = false) => {
@@ -50,6 +53,10 @@ function IssueList() {
     apiUrl += filter ? `&search=${filter}` : '';
     if (labelFilter.length > 0) {
       apiUrl += '&' + labelFilter.map((label) => `labels=${label}`).join('&');
+    }
+    if (issueFilter !== 'all') {
+      const isIssue = issueFilter === 'issue' ? true : false;
+      apiUrl += issueFilter ? `&is_issue=${isIssue}` : '';
     }
 
     if (isSearch) {
@@ -107,8 +114,8 @@ function IssueList() {
       case 'search':
         setSearchFilter(value);
         break;
-      case 'labels':
-        // setLabelFilter(value as string[]);
+      case 'is_issue':
+        setIssueFilter(value);
         break;
       default:
         break;
@@ -159,6 +166,13 @@ function IssueList() {
             }
           />
           </FormControl>
+
+          <RadioGroup row value={issueFilter} onChange={handleFilterChange} name="is_issue">
+            <FormControlLabel value="all" control={<Radio />} label="All" />
+            <FormControlLabel value="issue" control={<Radio />} label="Issue" />
+            <FormControlLabel value="pull reqeust" control={<Radio />} label="Pull Request" />
+          </RadioGroup>
+
         </Box>
 
         <List>

@@ -85,6 +85,7 @@ class IssueFilterSchema(FilterSchema):
     events_url: str | None
     html_url: str | None
     id: int | None
+    is_issue: bool | None
     labels_url: str | None
     locked: bool | None
     milestone: str | None
