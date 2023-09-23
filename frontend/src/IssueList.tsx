@@ -26,8 +26,9 @@ function IssueList() {
   const [labels, setLabels] = useState<Label[]>([]);
   const [labelFilter, setLabelFilter] = useState<string[]>([]);
   const [issueFilter, setIssueFilter] = useState('ISSUE');
-  const [issueStatus, setIssueStatus] = useState<'ALL' | 'OPEN' | 'CLOSED'>('OPEN');
-
+  const [issueStatus, setIssueStatus] = useState<'ALL' | 'OPEN' | 'CLOSED'>(
+    'OPEN',
+  );
 
   const offsetRef = useRef(0);
   const limit = 20;
@@ -41,14 +42,17 @@ function IssueList() {
       window.removeEventListener('scroll', handleScroll);
     };
   }, [filter, labelFilter, issueFilter, issueStatus]);
-  const handleScroll = useCallback(_.throttle(() => {
-    if (
-      window.innerHeight + document.documentElement.scrollTop + 1 <
-      document.documentElement.offsetHeight
+  const handleScroll = useCallback(
+    _.throttle(() => {
+      if (
+        window.innerHeight + document.documentElement.scrollTop + 1 <
+        document.documentElement.offsetHeight
       )
-      return;
-    fetchIssues();
-  }, 100), [offsetRef, filter]);
+        return;
+      fetchIssues();
+    }, 100),
+    [offsetRef, filter],
+  );
 
   const fetchIssues = async (isSearch = false) => {
     let apiUrl = `http://localhost:8000/api/issues/?limit=${limit}&offset=${offsetRef.current}`;
@@ -176,7 +180,6 @@ function IssueList() {
               }
             />
           </FormControl>
-
         </Box>
 
         <Box
