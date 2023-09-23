@@ -14,11 +14,18 @@ import {
   Autocomplete,
   InputLabel,
   Select,
+  Avatar,
   MenuItem,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
 } from '@mui/material';
 import _ from 'lodash';
 import axios from 'axios';
 import { Issue, IssueAPIResponse, Label, LabelAPIResponse } from './types';
+import CommentIcon from '@mui/icons-material/Comment';
 
 function IssueList() {
   const [issues, setIssues] = useState<Issue[]>([]);
@@ -222,24 +229,23 @@ function IssueList() {
             </Select>
           </FormControl>
         </Box>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell style={{ fontWeight: 'bold' }}>Issue</TableCell>
+              <TableCell style={{ fontWeight: 'bold', textAlign: 'center' }}>
+                Assignees
+              </TableCell>
+              <TableCell style={{ fontWeight: 'bold', textAlign: 'center' }}>
+                Comments
+              </TableCell>
+            </TableRow>
+          </TableHead>
 
-        <List>
-          {issues.map((issue, index) => (
-            <React.Fragment key={issue.id}>
-              <ListItem disablePadding>
-                <ListItemButton
-                  component="a"
-                  href={issue.html_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  sx={{
-                    width: '100%',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    textDecoration: 'none',
-                    color: 'inherit',
-                  }}
-                >
+          <TableBody>
+            {issues.map((issue, index) => (
+              <TableRow key={issue.id}>
+                <TableCell>
                   <Box display="flex" flexDirection="column">
                     <ListItemText
                       primary={
@@ -270,12 +276,53 @@ function IssueList() {
                       {issue.user.login}
                     </Typography>
                   </Box>
-                </ListItemButton>
-              </ListItem>
-              {index !== issues.length - 1 && <Divider />}
-            </React.Fragment>
-          ))}
-        </List>
+                </TableCell>
+                <TableCell align="right">
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    sx={{ minWidth: '100px', marginRight: '1rem' }}
+                  >
+                    {issue.assignees &&
+                      issue.assignees.map((assignee) => (
+                        <Box
+                          key={assignee.id}
+                          display="flex"
+                          alignItems="center"
+                          sx={{ mr: 2 }}
+                        >
+                          <Avatar
+                            src={assignee.avatar_url}
+                            alt={assignee.login}
+                            sx={{ width: 24, height: 24, mr: 0.5 }}
+                          />
+                          <Typography variant="body2">
+                            {assignee.login}
+                          </Typography>
+                        </Box>
+                      ))}
+                  </Box>
+                </TableCell>
+                <TableCell align="right">
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    sx={{ minWidth: '50px' }}
+                  >
+                    {issue.comments > 0 && (
+                      <>
+                        <CommentIcon sx={{ mr: 1 }} />
+                        <Typography variant="body2">
+                          {issue.comments}
+                        </Typography>
+                      </>
+                    )}
+                  </Box>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       </Box>
     </Container>
   );
