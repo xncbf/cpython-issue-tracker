@@ -8,11 +8,8 @@ import {
   Container,
   Box,
   Divider,
-  RadioGroup,
-  Radio,
   ListItemButton,
   TextField,
-  FormControlLabel,
   FormControl,
   Autocomplete,
   InputLabel,
@@ -44,6 +41,14 @@ function IssueList() {
       window.removeEventListener('scroll', handleScroll);
     };
   }, [filter, labelFilter, issueFilter, issueStatus]);
+  const handleScroll = useCallback(() => {
+    if (
+      window.innerHeight + document.documentElement.scrollTop + 1 <
+      document.documentElement.offsetHeight
+      )
+      return;
+    fetchIssues();
+  }, [offsetRef, filter]);
 
   const fetchIssues = async (isSearch = false) => {
     let apiUrl = `http://localhost:8000/api/issues/?limit=${limit}&offset=${offsetRef.current}`;
@@ -93,15 +98,6 @@ function IssueList() {
     }
   };
 
-  const handleScroll = useCallback(() => {
-    if (
-      window.innerHeight + document.documentElement.scrollTop + 1 <
-      document.documentElement.offsetHeight
-      )
-      return;
-    fetchIssues();
-  }, [offsetRef, filter]);
-
   const handleAutocompleteChange = (event: any, newValue: readonly Label[]) => {
     setLabelFilter(newValue.map((label) => label.id.toString()));
     offsetRef.current = 0;
@@ -149,7 +145,7 @@ function IssueList() {
             variant="outlined"
             value={filter}
             onChange={handleFilterChange}
-            sx={{ flex: 2 }}
+            sx={{ flex: 1 }}
           />
           <FormControl variant="outlined" sx={{ flex: 1 }}>
             <Autocomplete
@@ -180,21 +176,7 @@ function IssueList() {
               }
             />
           </FormControl>
-          <FormControl variant="outlined" sx={{ flex: 1 }}>
-            <InputLabel id="issue-type-filter-label">Type</InputLabel>
-            <Select
-              labelId="issue-type-filter-label"
-              id="issue-type-filter"
-              value={issueFilter}
-              label="issue-type"
-              onChange={handleFilterChange}
-              name="is_issue"
-            >
-              <MenuItem value="ALL">All</MenuItem>
-              <MenuItem value="ISSUE">Issue</MenuItem>
-              <MenuItem value="PULL REQUEST">Pull Request</MenuItem>
-            </Select>
-          </FormControl>
+
         </Box>
 
         <Box
@@ -219,6 +201,21 @@ function IssueList() {
               <MenuItem value="ALL">All</MenuItem>
               <MenuItem value="OPEN">Open</MenuItem>
               <MenuItem value="CLOSED">Closed</MenuItem>
+            </Select>
+          </FormControl>
+          <FormControl variant="outlined" sx={{ flex: 1 }}>
+            <InputLabel id="issue-type-filter-label">Type</InputLabel>
+            <Select
+              labelId="issue-type-filter-label"
+              id="issue-type-filter"
+              value={issueFilter}
+              label="issue-type"
+              onChange={handleFilterChange}
+              name="is_issue"
+            >
+              <MenuItem value="ALL">All</MenuItem>
+              <MenuItem value="ISSUE">Issue</MenuItem>
+              <MenuItem value="PULL REQUEST">Pull Request</MenuItem>
             </Select>
           </FormControl>
         </Box>
