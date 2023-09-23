@@ -16,7 +16,7 @@ import {
   Select,
   MenuItem,
 } from '@mui/material';
-
+import _ from 'lodash';
 import axios from 'axios';
 import { Issue, IssueAPIResponse, Label, LabelAPIResponse } from './types';
 
@@ -41,14 +41,14 @@ function IssueList() {
       window.removeEventListener('scroll', handleScroll);
     };
   }, [filter, labelFilter, issueFilter, issueStatus]);
-  const handleScroll = useCallback(() => {
+  const handleScroll = useCallback(_.throttle(() => {
     if (
       window.innerHeight + document.documentElement.scrollTop + 1 <
       document.documentElement.offsetHeight
       )
       return;
     fetchIssues();
-  }, [offsetRef, filter]);
+  }, 100), [offsetRef, filter]);
 
   const fetchIssues = async (isSearch = false) => {
     let apiUrl = `http://localhost:8000/api/issues/?limit=${limit}&offset=${offsetRef.current}`;
