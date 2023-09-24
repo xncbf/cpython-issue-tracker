@@ -113,7 +113,7 @@ function IssueList() {
     let name: string;
     let value: any;
 
-    if (typeof event === "string") {
+    if (typeof event === 'string') {
       name = event;
       value = key;
     } else {
@@ -133,14 +133,14 @@ function IssueList() {
         setIssueStatus(value);
         break;
       case 'labels':
-        if (value) setLabelFilter(value.map((label: Label) => label.id.toString()));
+        if (value)
+          setLabelFilter(value.map((label: Label) => label.id.toString()));
         break;
       default:
         break;
     }
     offsetRef.current = 0;
     setIssues([]);
-    fetchData();
   };
   return (
     <Container maxWidth="lg">
@@ -175,7 +175,7 @@ function IssueList() {
               value={labels.filter((label) =>
                 labelFilter.includes(label.id.toString()),
               )}
-              onChange={(e, v) => handleFilterChange("labels", v)}
+              onChange={(e, v) => handleFilterChange('labels', v)}
               renderInput={(params) => (
                 <TextField
                   {...params}
