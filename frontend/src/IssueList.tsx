@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import {
-  List,
+  Link,
   ListItem,
   ListItemText,
   Hidden,
@@ -249,37 +249,40 @@ function IssueList() {
             {issues.map((issue, index) => (
               <TableRow key={issue.id}>
                 <TableCell>
-                  <Box display="flex" flexDirection="column">
-                    <ListItemText
-                      primary={
-                        <>
-                          {issue.title}
-                          {issue.labels &&
-                            issue.labels.map((label) => (
-                              <Chip
-                                key={label.id}
-                                label={label.name}
-                                sx={{
-                                  ml: 1,
-                                  backgroundColor: `#${label.color}`,
-                                  color: '#000000',
-                                }}
-                                size="small"
-                              />
-                            ))}
-                        </>
-                      }
-                    />
-                    <Typography
-                      variant="body2"
-                      color="textSecondary"
-                      sx={{ mt: 1 }}
-                    >
-                      #{issue.number} opened {issue.created_at.toString()} by{' '}
-                      {issue.user.login}
-                    </Typography>
-                  </Box>
-                </TableCell>
+                <Box display="flex" flexDirection="column">
+    <Link
+      href={issue.html_url}
+      target="_blank"
+      rel="noopener noreferrer"
+      underline="none"
+      color="inherit"
+    >
+      <Box display="flex" alignItems="center" gap={1}>
+        <Typography variant="body1">{issue.title}</Typography>
+        {issue.labels &&
+          issue.labels.map((label) => (
+            <Chip
+              key={label.id}
+              label={label.name}
+              sx={{
+                backgroundColor: `#${label.color}`,
+                color: '#000000',
+              }}
+              size="small"
+            />
+          ))}
+      </Box>
+    </Link>
+    <Typography
+      variant="body2"
+      color="textSecondary"
+      sx={{ mt: 1 }}
+    >
+      #{issue.number} opened {issue.created_at.toString()} by {issue.user.login}
+    </Typography>
+  </Box>
+</TableCell>
+
                 <Hidden smDown>
                 <TableCell>
                 <Box display="flex" justifyContent="center" alignItems="center">
