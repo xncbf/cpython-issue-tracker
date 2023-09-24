@@ -3,6 +3,7 @@ import {
   List,
   ListItem,
   ListItemText,
+  Hidden,
   Chip,
   Typography,
   Container,
@@ -233,12 +234,14 @@ function IssueList() {
           <TableHead>
             <TableRow>
               <TableCell style={{ fontWeight: 'bold' }}>Issue</TableCell>
-              <TableCell style={{ fontWeight: 'bold', textAlign: 'center' }}>
-                Assignees
-              </TableCell>
-              <TableCell style={{ fontWeight: 'bold', textAlign: 'center' }}>
-                Comments
-              </TableCell>
+              <Hidden smDown>
+                <TableCell style={{ fontWeight: 'bold', textAlign: 'center' }}>
+                  Assignees
+                </TableCell>
+                <TableCell style={{ fontWeight: 'bold', textAlign: 'center' }}>
+                  Comments
+                </TableCell>
+              </Hidden>
             </TableRow>
           </TableHead>
 
@@ -277,12 +280,9 @@ function IssueList() {
                     </Typography>
                   </Box>
                 </TableCell>
-                <TableCell align="right">
-                  <Box
-                    display="flex"
-                    alignItems="center"
-                    sx={{ minWidth: '100px', marginRight: '1rem' }}
-                  >
+                <Hidden smDown>
+                <TableCell>
+                <Box display="flex" justifyContent="center" alignItems="center">
                     {issue.assignees &&
                       issue.assignees.map((assignee) => (
                         <Box
@@ -303,12 +303,8 @@ function IssueList() {
                       ))}
                   </Box>
                 </TableCell>
-                <TableCell align="right">
-                  <Box
-                    display="flex"
-                    alignItems="center"
-                    sx={{ minWidth: '50px' }}
-                  >
+                <TableCell>
+                  <Box display="flex" justifyContent="center" alignItems="center">
                     {issue.comments > 0 && (
                       <>
                         <CommentIcon sx={{ mr: 1 }} />
@@ -319,6 +315,7 @@ function IssueList() {
                     )}
                   </Box>
                 </TableCell>
+                </Hidden>
               </TableRow>
             ))}
           </TableBody>
