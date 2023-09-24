@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useRef } from 'react';
+import React, { useEffect, useState, useCallback, useRef, useMemo } from 'react';
 import {
   Link,
   Hidden,
@@ -37,7 +37,6 @@ function IssueList() {
   const abortControllerRef = useRef<AbortController | null>(null);
   const limit = 20;
 
-  // const abortController = new AbortController();
   const fetchData = useCallback(
     async () => {
       if (abortControllerRef.current) {
@@ -76,32 +75,32 @@ function IssueList() {
     },
     [limit, searchFilter, labelFilter, issueFilter, issueStatus],
   );
+  const throttledFetchData = useMemo(() =>
+    _.throttle(() => {
+      if (
+        window.innerHeight + document.documentElement.scrollTop + 1 <
+        document.documentElement.offsetHeight
+      ) return;
+
+      fetchData();
+    }, 100)
+  , [fetchData]);
+
+const handleScroll = useCallback(() => {
+  throttledFetchData();
+}, [throttledFetchData]);
+
+
   useEffect(() => {
     fetchData();
     window.addEventListener('scroll', handleScroll);
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, [fetchData]);
-  const handleScroll = useCallback(
-    _.throttle(() => {
-      if (
-        window.innerHeight + document.documentElement.scrollTop + 1 <
-        document.documentElement.offsetHeight
-      )
-        return;
-      fetchData();
-    }, 100),
-    [offsetRef, limit, searchFilter, labelFilter, issueFilter, issueStatus],
-  );
-  const handleAutocompleteChange = (event: any, newValue: readonly Label[]) => {
-    setLabelFilter(newValue.map((label) => label.id.toString()));
-    offsetRef.current = 0;
-    setIssues([]);
-    fetchData();
-  };
-  const handleFilterChange = (event: any) => {
+  }, [fetchData, handleScroll]);
+  const handleFilterChange = (event: any, key?: any) => {
     const { name, value } = event.target;
+    // console.log(newValue)
     switch (name) {
       case 'search':
         setSearchFilter(value);
@@ -111,6 +110,10 @@ function IssueList() {
         break;
       case 'status':
         setIssueStatus(value);
+        break;
+      case 'labels':
+        if (key)
+          setLabelFilter(key.map((label: Label) => label.id.toString()));
         break;
       default:
         break;
@@ -152,7 +155,7 @@ function IssueList() {
               value={labels.filter((label) =>
                 labelFilter.includes(label.id.toString()),
               )}
-              onChange={handleAutocompleteChange}
+              onChange={handleFilterChange}
               renderInput={(params) => (
                 <TextField
                   {...params}
