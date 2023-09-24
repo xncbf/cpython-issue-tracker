@@ -29,6 +29,8 @@ import _ from 'lodash';
 import CommentIcon from '@mui/icons-material/Comment';
 import { Issue, Label } from './types';
 import { fetchIssues, fetchLabels } from './api';
+import SearchField from './SearchField';
+import LabelFilter from './LabelFilter';
 
 function IssueList() {
   const [issues, setIssues] = useState<Issue[]>([]);
@@ -158,42 +160,9 @@ function IssueList() {
             gap: 2,
           }}
         >
-          <TextField
-            name="search"
-            label="Search by title and body"
-            variant="outlined"
-            value={searchFilter}
-            onChange={handleFilterChange}
-            sx={{ flex: 1 }}
-          />
+          <SearchField value={searchFilter} onChange={handleFilterChange} />
           <FormControl variant="outlined" sx={{ flex: 1 }}>
-            <Autocomplete
-              multiple
-              id="labels-autocomplete"
-              options={labels}
-              getOptionLabel={(option) => option.name}
-              value={labels.filter((label) =>
-                labelFilter.includes(label.id.toString()),
-              )}
-              onChange={(e, v) => handleFilterChange('labels', v)}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  variant="outlined"
-                  placeholder="Search labels..."
-                  name="labels"
-                />
-              )}
-              renderTags={(value, getTagProps) =>
-                value.map((option, index) => (
-                  <Chip
-                    variant="outlined"
-                    label={option.name}
-                    {...getTagProps({ index })}
-                  />
-                ))
-              }
-            />
+          <LabelFilter labels={labels} value={labelFilter} onChange={handleFilterChange} />
           </FormControl>
         </Box>
 
