@@ -26,8 +26,8 @@ import { fetchIssues, fetchLabels } from './api';
 
 function IssueList() {
   const [issues, setIssues] = useState<Issue[]>([]);
-  const [searchFilter, setSearchFilter] = useState('');
   const [labels, setLabels] = useState<Label[]>([]);
+  const [searchFilter, setSearchFilter] = useState('');
   const [labelFilter, setLabelFilter] = useState<string[]>([]);
   const [issueFilter, setIssueFilter] = useState('ISSUE');
   const [issueStatus, setIssueStatus] = useState<'ALL' | 'OPEN' | 'CLOSED'>(
@@ -36,11 +36,13 @@ function IssueList() {
   const offsetRef = useRef(0);
   const limit = 20;
 
-  const abortController = new AbortController();
+  // const abortController = new AbortController();
   const fetchData = useCallback(
     async (isSearch = false) => {
+      const currentAbortController = new AbortController();
+
       if (isSearch) {
-        abortController.abort();
+        currentAbortController.abort();
       }
 
       try {
@@ -51,7 +53,7 @@ function IssueList() {
           labelFilter,
           issueFilter,
           issueStatus,
-          abortController,
+          currentAbortController,
         );
 
         setIssues((prevIssues) => [...prevIssues, ...issuesData.items]);
@@ -88,7 +90,7 @@ function IssueList() {
         return;
       fetchData();
     }, 100),
-    [offsetRef, searchFilter],
+    [offsetRef, limit, searchFilter, labelFilter, issueFilter, issueStatus],
   );
   const handleAutocompleteChange = (event: any, newValue: readonly Label[]) => {
     setLabelFilter(newValue.map((label) => label.id.toString()));
