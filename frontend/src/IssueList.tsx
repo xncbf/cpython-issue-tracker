@@ -1,15 +1,11 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import {
   Link,
-  ListItem,
-  ListItemText,
   Hidden,
   Chip,
   Typography,
   Container,
   Box,
-  Divider,
-  ListItemButton,
   TextField,
   FormControl,
   Autocomplete,
@@ -24,32 +20,65 @@ import {
   TableBody,
 } from '@mui/material';
 import _ from 'lodash';
-import axios from 'axios';
-import { Issue, IssueAPIResponse, Label, LabelAPIResponse } from './types';
 import CommentIcon from '@mui/icons-material/Comment';
+import { Issue, Label } from './types';
+import { fetchIssues, fetchLabels } from './api';
 
 function IssueList() {
   const [issues, setIssues] = useState<Issue[]>([]);
-  const [filter, setSearchFilter] = useState('');
+  const [searchFilter, setSearchFilter] = useState('');
   const [labels, setLabels] = useState<Label[]>([]);
   const [labelFilter, setLabelFilter] = useState<string[]>([]);
   const [issueFilter, setIssueFilter] = useState('ISSUE');
   const [issueStatus, setIssueStatus] = useState<'ALL' | 'OPEN' | 'CLOSED'>(
     'OPEN',
   );
-
   const offsetRef = useRef(0);
   const limit = 20;
-  const abortController = new AbortController();
 
+  const abortController = new AbortController();
+  const fetchData = useCallback(
+    async (isSearch = false) => {
+      if (isSearch) {
+        abortController.abort();
+      }
+
+      try {
+        const issuesData = await fetchIssues(
+          limit,
+          offsetRef.current,
+          searchFilter,
+          labelFilter,
+          issueFilter,
+          issueStatus,
+          abortController,
+        );
+
+        setIssues((prevIssues) => [...prevIssues, ...issuesData.items]);
+
+        if (issuesData.items.length > 0) {
+          offsetRef.current += limit;
+        }
+
+        const labelsData = await fetchLabels();
+        setLabels(labelsData.items);
+      } catch (error: any) {
+        if (error.name === 'CanceledError') {
+          console.log('Fetch aborted');
+        } else {
+          console.error('Error fetching data:', error);
+        }
+      }
+    },
+    [limit, searchFilter, labelFilter, issueFilter, issueStatus],
+  );
   useEffect(() => {
-    fetchIssues();
-    fetchLabels();
+    fetchData();
     window.addEventListener('scroll', handleScroll);
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, [filter, labelFilter, issueFilter, issueStatus]);
+  }, [fetchData]);
   const handleScroll = useCallback(
     _.throttle(() => {
       if (
@@ -57,64 +86,15 @@ function IssueList() {
         document.documentElement.offsetHeight
       )
         return;
-      fetchIssues();
+      fetchData();
     }, 100),
-    [offsetRef, filter],
+    [offsetRef, searchFilter],
   );
-
-  const fetchIssues = async (isSearch = false) => {
-    let apiUrl = `http://localhost:8000/api/issues/?limit=${limit}&offset=${offsetRef.current}`;
-    apiUrl += filter ? `&search=${filter}` : '';
-    if (labelFilter.length > 0) {
-      apiUrl += '&' + labelFilter.map((label) => `labels=${label}`).join('&');
-    }
-    if (issueFilter !== 'ALL') {
-      const isIssue = issueFilter === 'ISSUE' ? true : false;
-      apiUrl += issueFilter ? `&is_issue=${isIssue}` : '';
-    }
-    if (issueStatus !== 'ALL') {
-      const is_open = issueStatus === 'CLOSED' ? false : true;
-      apiUrl += issueStatus ? `&is_open=${is_open}` : '';
-    }
-    if (isSearch) {
-      abortController.abort();
-    }
-
-    try {
-      const response = await axios.get<IssueAPIResponse>(apiUrl, {
-        signal: abortController.signal,
-      });
-      setIssues((prevIssues) => [...prevIssues, ...response.data.items]);
-      if (response.data.items.length > 0) {
-        offsetRef.current += limit;
-      }
-    } catch (error) {
-      if (error instanceof Error) {
-        // 요청이 사용자에 의해 취소되었을 경우만 오류를 무시합니다.
-        if (error.name === 'CanceledError') return;
-        console.error('Error fetching issues:', error.message);
-      } else {
-        console.error('An unexpected error occurred:', error);
-      }
-    }
-  };
-
-  const fetchLabels = async () => {
-    try {
-      const response = await axios.get<LabelAPIResponse>(
-        'http://localhost:8000/api/labels/',
-      );
-      setLabels(response.data.items);
-    } catch (error) {
-      console.error('Error fetching labels:', error);
-    }
-  };
-
   const handleAutocompleteChange = (event: any, newValue: readonly Label[]) => {
     setLabelFilter(newValue.map((label) => label.id.toString()));
     offsetRef.current = 0;
     setIssues([]);
-    fetchIssues(true);
+    fetchData(true);
   };
   const handleFilterChange = (event: any) => {
     const { name, value } = event.target;
@@ -133,7 +113,7 @@ function IssueList() {
     }
     offsetRef.current = 0;
     setIssues([]);
-    fetchIssues(true);
+    fetchData(true);
   };
   return (
     <Container maxWidth="lg">
@@ -155,7 +135,7 @@ function IssueList() {
             name="search"
             label="Search by title and body"
             variant="outlined"
-            value={filter}
+            value={searchFilter}
             onChange={handleFilterChange}
             sx={{ flex: 1 }}
           />
