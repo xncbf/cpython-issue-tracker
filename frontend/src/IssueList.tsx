@@ -103,8 +103,24 @@ function IssueList() {
       window.removeEventListener('scroll', handleScroll);
     };
   }, [fetchData, handleScroll]);
-  const handleFilterChange = (event: any, key?: any) => {
-    const { name, value } = event.target;
+  type StandardEvent = {
+    target: {
+      name: string;
+      value: any;
+    };
+  };
+  const handleFilterChange = (event: StandardEvent | string, key?: any) => {
+    let name: string;
+    let value: any;
+
+    if (typeof event === "string") {
+      name = event;
+      value = key;
+    } else {
+      name = event.target.name;
+      value = event.target.value;
+    }
+
     // console.log(newValue)
     switch (name) {
       case 'search':
@@ -117,7 +133,7 @@ function IssueList() {
         setIssueStatus(value);
         break;
       case 'labels':
-        if (key) setLabelFilter(key.map((label: Label) => label.id.toString()));
+        if (value) setLabelFilter(value.map((label: Label) => label.id.toString()));
         break;
       default:
         break;
@@ -159,7 +175,7 @@ function IssueList() {
               value={labels.filter((label) =>
                 labelFilter.includes(label.id.toString()),
               )}
-              onChange={handleFilterChange}
+              onChange={(e, v) => handleFilterChange("labels", v)}
               renderInput={(params) => (
                 <TextField
                   {...params}
