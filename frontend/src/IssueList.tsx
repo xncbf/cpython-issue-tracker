@@ -32,18 +32,20 @@ function IssueList() {
   const [issueFilter, setIssueFilter] = useState('ISSUE');
   const [issueStatus, setIssueStatus] = useState<'ALL' | 'OPEN' | 'CLOSED'>(
     'OPEN',
-  );
+    );
   const offsetRef = useRef(0);
+  const abortControllerRef = useRef<AbortController | null>(null);
   const limit = 20;
 
   // const abortController = new AbortController();
   const fetchData = useCallback(
-    async (isSearch = false) => {
-      const currentAbortController = new AbortController();
-
-      if (isSearch) {
-        currentAbortController.abort();
+    async () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();  // 이전 요청 중단
       }
+
+      const currentAbortController = new AbortController();
+      abortControllerRef.current = currentAbortController;  // 현재의 AbortController를 추적
 
       try {
         const issuesData = await fetchIssues(
@@ -96,7 +98,7 @@ function IssueList() {
     setLabelFilter(newValue.map((label) => label.id.toString()));
     offsetRef.current = 0;
     setIssues([]);
-    fetchData(true);
+    fetchData();
   };
   const handleFilterChange = (event: any) => {
     const { name, value } = event.target;
@@ -115,7 +117,7 @@ function IssueList() {
     }
     offsetRef.current = 0;
     setIssues([]);
-    fetchData(true);
+    fetchData();
   };
   return (
     <Container maxWidth="lg">
