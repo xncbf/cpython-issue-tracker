@@ -1,4 +1,10 @@
-import React, { useEffect, useState, useCallback, useRef, useMemo } from 'react';
+import React, {
+  useEffect,
+  useState,
+  useCallback,
+  useRef,
+  useMemo,
+} from 'react';
 import {
   Link,
   Hidden,
@@ -32,64 +38,63 @@ function IssueList() {
   const [issueFilter, setIssueFilter] = useState('ISSUE');
   const [issueStatus, setIssueStatus] = useState<'ALL' | 'OPEN' | 'CLOSED'>(
     'OPEN',
-    );
+  );
   const offsetRef = useRef(0);
   const abortControllerRef = useRef<AbortController | null>(null);
   const limit = 20;
 
-  const fetchData = useCallback(
-    async () => {
-      if (abortControllerRef.current) {
-        abortControllerRef.current.abort();  // 이전 요청 중단
+  const fetchData = useCallback(async () => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort(); // 이전 요청 중단
+    }
+
+    const currentAbortController = new AbortController();
+    abortControllerRef.current = currentAbortController; // 현재의 AbortController를 추적
+
+    try {
+      const issuesData = await fetchIssues(
+        limit,
+        offsetRef.current,
+        searchFilter,
+        labelFilter,
+        issueFilter,
+        issueStatus,
+        currentAbortController,
+      );
+
+      setIssues((prevIssues) => [...prevIssues, ...issuesData.items]);
+
+      if (issuesData.items.length > 0) {
+        offsetRef.current += limit;
       }
 
-      const currentAbortController = new AbortController();
-      abortControllerRef.current = currentAbortController;  // 현재의 AbortController를 추적
-
-      try {
-        const issuesData = await fetchIssues(
-          limit,
-          offsetRef.current,
-          searchFilter,
-          labelFilter,
-          issueFilter,
-          issueStatus,
-          currentAbortController,
-        );
-
-        setIssues((prevIssues) => [...prevIssues, ...issuesData.items]);
-
-        if (issuesData.items.length > 0) {
-          offsetRef.current += limit;
-        }
-
-        const labelsData = await fetchLabels();
-        setLabels(labelsData.items);
-      } catch (error: any) {
-        if (error.name === 'CanceledError') {
-          console.log('Fetch aborted');
-        } else {
-          console.error('Error fetching data:', error);
-        }
+      const labelsData = await fetchLabels();
+      setLabels(labelsData.items);
+    } catch (error: any) {
+      if (error.name === 'CanceledError') {
+        console.log('Fetch aborted');
+      } else {
+        console.error('Error fetching data:', error);
       }
-    },
-    [limit, searchFilter, labelFilter, issueFilter, issueStatus],
+    }
+  }, [limit, searchFilter, labelFilter, issueFilter, issueStatus]);
+  const throttledFetchData = useMemo(
+    () =>
+      _.throttle(() => {
+        if (
+          window.innerHeight + document.documentElement.scrollTop + 1 <
+          document.documentElement.offsetHeight
+        )
+          return;
+
+        fetchData();
+      }, 100),
+    [fetchData],
   );
-  const throttledFetchData = useMemo(() =>
-    _.throttle(() => {
-      if (
-        window.innerHeight + document.documentElement.scrollTop + 1 <
-        document.documentElement.offsetHeight
-      ) return;
 
-      fetchData();
-    }, 100)
-  , [fetchData]);
-
-const handleScroll = useCallback(() => {
-  throttledFetchData();
-}, [throttledFetchData]);
-
+  const handleScroll = useCallback(() => {
+    throttledFetchData();
+  }, [throttledFetchData]);
 
   useEffect(() => {
     fetchData();
@@ -112,8 +117,7 @@ const handleScroll = useCallback(() => {
         setIssueStatus(value);
         break;
       case 'labels':
-        if (key)
-          setLabelFilter(key.map((label: Label) => label.id.toString()));
+        if (key) setLabelFilter(key.map((label: Label) => label.id.toString()));
         break;
       default:
         break;
