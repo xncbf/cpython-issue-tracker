@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'; // Switch 대신 Routes를 사용
-import IssueList from './IssueList';
+import IssueList from './components/IssueList';
 import IssueDetail from './IssueDetail';
 
 function App() {

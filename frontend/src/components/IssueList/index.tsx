@@ -25,8 +25,8 @@ import {
 } from '@mui/material';
 import _ from 'lodash';
 import CommentIcon from '@mui/icons-material/Comment';
-import { Issue, Label } from './types';
-import { fetchIssues, fetchLabels } from './api';
+import { Issue, Label } from '../../types';
+import { fetchIssues, fetchLabels } from '../../api';
 import SearchField from './SearchField';
 import LabelFilter from './LabelFilter';
 import useInfiniteScroll from './useInfiniteScroll';

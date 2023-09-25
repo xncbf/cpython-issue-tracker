@@ -1,5 +1,5 @@
 import { TextField, Chip, Autocomplete } from '@mui/material';
-import { Label } from './types';
+import { Label } from '../../types';
 
 type LabelFilterProps = {
   labels: Label[];
