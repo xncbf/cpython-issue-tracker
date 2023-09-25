@@ -30,12 +30,13 @@ import { fetchIssues, fetchLabels } from '../../api';
 import SearchField from './SearchField';
 import LabelFilter from './LabelFilter';
 import useInfiniteScroll from './useInfiniteScroll';
+import useLocalStorage from './useLocalStorage';
 
 type FiltersProps = {
   searchFilter: string;
   labelFilter: string[];
   labels: Label[];
-  issueStatus: 'ALL' | 'OPEN' | 'CLOSED';
+  issueStatusFilter: 'ALL' | 'OPEN' | 'CLOSED';
   issueFilter: string;
   handleFilterChange: (event: any, key?: any) => void;
 };
@@ -44,7 +45,7 @@ function Filters({
   searchFilter,
   labelFilter,
   labels,
-  issueStatus,
+  issueStatusFilter,
   issueFilter,
   handleFilterChange,
 }: FiltersProps) {
@@ -83,7 +84,7 @@ function Filters({
           <Select
             labelId="issue-status-label"
             id="issue-status"
-            value={issueStatus}
+            value={issueStatusFilter}
             label="status"
             name="status"
             onChange={handleFilterChange}
@@ -220,12 +221,21 @@ function IssuesTable({ issues }: IssuesTableProps) {
 function IssueList() {
   const [issues, setIssues] = useState<Issue[]>([]);
   const [labels, setLabels] = useState<Label[]>([]);
-  const [searchFilter, setSearchFilter] = useState('');
-  const [labelFilter, setLabelFilter] = useState<string[]>([]);
-  const [issueFilter, setIssueFilter] = useState('ISSUE');
-  const [issueStatus, setIssueStatus] = useState<'ALL' | 'OPEN' | 'CLOSED'>(
-    'OPEN',
+  const [searchFilter, setSearchFilter] = useLocalStorage<string>(
+    'searchFilter',
+    '',
   );
+  const [labelFilter, setLabelFilter] = useLocalStorage<string[]>(
+    'labelFilter',
+    [],
+  );
+  const [issueFilter, setIssueFilter] = useLocalStorage<string>(
+    'issueFilter',
+    'ISSUE',
+  );
+  const [issueStatusFilter, setIssueStatusFilter] = useLocalStorage<
+    'ALL' | 'OPEN' | 'CLOSED'
+  >('issueStatusFilter', 'OPEN');
   const offsetRef = useRef(0);
   const abortControllerRef = useRef<AbortController | null>(null);
   const limit = 20;
@@ -245,7 +255,7 @@ function IssueList() {
         searchFilter,
         labelFilter,
         issueFilter,
-        issueStatus,
+        issueStatusFilter,
         currentAbortController,
       );
 
@@ -264,7 +274,7 @@ function IssueList() {
         console.error('Error fetching data:', error);
       }
     }
-  }, [limit, searchFilter, labelFilter, issueFilter, issueStatus]);
+  }, [limit, searchFilter, labelFilter, issueFilter, issueStatusFilter]);
   const throttledFetchData = useMemo(
     () =>
       _.throttle(() => {
@@ -305,7 +315,7 @@ function IssueList() {
         setIssueFilter(value);
         break;
       case 'status':
-        setIssueStatus(value);
+        setIssueStatusFilter(value);
         break;
       case 'labels':
         if (value)
@@ -328,7 +338,7 @@ function IssueList() {
           handleFilterChange={handleFilterChange}
           labelFilter={labelFilter}
           labels={labels}
-          issueStatus={issueStatus}
+          issueStatusFilter={issueStatusFilter}
           issueFilter={issueFilter}
         />
         <IssuesTable issues={issues} />

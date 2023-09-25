@@ -7,7 +7,7 @@ export const fetchIssues = async (
   filter: string,
   labelFilter: string[],
   issueFilter: string,
-  issueStatus: 'ALL' | 'OPEN' | 'CLOSED',
+  issueStatusFilter: 'ALL' | 'OPEN' | 'CLOSED',
   abortController: AbortController,
 ): Promise<IssueAPIResponse> => {
   let apiUrl = `http://localhost:8000/api/issues/?limit=${limit}&offset=${offset}`;
@@ -23,9 +23,9 @@ export const fetchIssues = async (
     apiUrl += issueFilter ? `&is_issue=${isIssue}` : '';
   }
 
-  if (issueStatus !== 'ALL') {
-    const is_open = issueStatus === 'CLOSED' ? false : true;
-    apiUrl += issueStatus ? `&is_open=${is_open}` : '';
+  if (issueStatusFilter !== 'ALL') {
+    const is_open = issueStatusFilter === 'CLOSED' ? false : true;
+    apiUrl += issueStatusFilter ? `&is_open=${is_open}` : '';
   }
 
   const response = await axios.get<IssueAPIResponse>(apiUrl, {
