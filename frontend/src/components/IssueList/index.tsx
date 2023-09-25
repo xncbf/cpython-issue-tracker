@@ -50,66 +50,50 @@ function Filters({
   handleFilterChange,
 }: FiltersProps) {
   return (
-    <Box sx={{ marginBottom: 3 }}>
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'row',
-          mb: 3,
-          justifyContent: 'space-between',
-          gap: 2,
-        }}
-      >
-        <SearchField value={searchFilter} onChange={handleFilterChange} />
-        <FormControl variant="outlined" sx={{ flex: 1 }}>
-          <LabelFilter
-            labels={labels}
-            value={labelFilter}
-            onChange={handleFilterChange}
-          />
-        </FormControl>
-      </Box>
+    <Box
+      sx={{ marginBottom: 3, display: 'flex', flexDirection: 'column', gap: 3 }}
+    >
+      <SearchField value={searchFilter} onChange={handleFilterChange} />
 
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'row',
-          mb: 3,
-          justifyContent: 'space-between',
-          gap: 2,
-        }}
-      >
-        <FormControl variant="outlined" sx={{ flex: 1 }}>
-          <InputLabel id="issue-status-label">status</InputLabel>
-          <Select
-            labelId="issue-status-label"
-            id="issue-status"
-            value={issueStatusFilter}
-            label="status"
-            name="status"
-            onChange={handleFilterChange}
-          >
-            <MenuItem value="ALL">All</MenuItem>
-            <MenuItem value="OPEN">Open</MenuItem>
-            <MenuItem value="CLOSED">Closed</MenuItem>
-          </Select>
-        </FormControl>
-        <FormControl variant="outlined" sx={{ flex: 1 }}>
-          <InputLabel id="issue-type-filter-label">Type</InputLabel>
-          <Select
-            labelId="issue-type-filter-label"
-            id="issue-type-filter"
-            value={issueFilter}
-            label="issue-type"
-            onChange={handleFilterChange}
-            name="is_issue"
-          >
-            <MenuItem value="ALL">All</MenuItem>
-            <MenuItem value="ISSUE">Issue</MenuItem>
-            <MenuItem value="PULL REQUEST">Pull Request</MenuItem>
-          </Select>
-        </FormControl>
-      </Box>
+      <FormControl variant="outlined" fullWidth>
+        <LabelFilter
+          labels={labels}
+          value={labelFilter}
+          onChange={handleFilterChange}
+        />
+      </FormControl>
+
+      <FormControl variant="outlined" fullWidth>
+        <InputLabel id="issue-status-label">status</InputLabel>
+        <Select
+          labelId="issue-status-label"
+          id="issue-status"
+          value={issueStatusFilter}
+          label="status"
+          name="status"
+          onChange={handleFilterChange}
+        >
+          <MenuItem value="ALL">All</MenuItem>
+          <MenuItem value="OPEN">Open</MenuItem>
+          <MenuItem value="CLOSED">Closed</MenuItem>
+        </Select>
+      </FormControl>
+
+      <FormControl variant="outlined" fullWidth>
+        <InputLabel id="issue-type-filter-label">Type</InputLabel>
+        <Select
+          labelId="issue-type-filter-label"
+          id="issue-type-filter"
+          value={issueFilter}
+          label="issue-type"
+          onChange={handleFilterChange}
+          name="is_issue"
+        >
+          <MenuItem value="ALL">All</MenuItem>
+          <MenuItem value="ISSUE">Issue</MenuItem>
+          <MenuItem value="PULL REQUEST">Pull Request</MenuItem>
+        </Select>
+      </FormControl>
     </Box>
   );
 }
@@ -130,22 +114,24 @@ function IssueRow({ issue }: IssueRowProps) {
             underline="none"
             color="inherit"
           >
-            <Box display="flex" alignItems="center" gap={1}>
-              <Typography variant="body1">{issue.title}</Typography>
-              {issue.labels &&
-                issue.labels.map((label) => (
-                  <Chip
-                    key={label.id}
-                    label={label.name}
-                    sx={{
-                      backgroundColor: `#${label.color}`,
-                      color: '#000000',
-                    }}
-                    size="small"
-                  />
-                ))}
-            </Box>
+            <Typography variant="body1">{issue.title}</Typography>
           </Link>
+
+          <Box display="flex" alignItems="center" gap={1} mt={1}>
+            {issue.labels &&
+              issue.labels.map((label) => (
+                <Chip
+                  key={label.id}
+                  label={label.name}
+                  sx={{
+                    backgroundColor: `#${label.color}`,
+                    color: '#000000',
+                  }}
+                  size="small"
+                />
+              ))}
+          </Box>
+
           <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
             #{issue.number} opened {issue.created_at.toString()} by{' '}
             {issue.user.login}
@@ -333,15 +319,21 @@ function IssueList() {
         <Typography variant="h4" gutterBottom>
           CPython Issues
         </Typography>
-        <Filters
-          searchFilter={searchFilter}
-          handleFilterChange={handleFilterChange}
-          labelFilter={labelFilter}
-          labels={labels}
-          issueStatusFilter={issueStatusFilter}
-          issueFilter={issueFilter}
-        />
-        <IssuesTable issues={issues} />
+        <Box sx={{ display: 'flex', flexDirection: 'row', gap: 4 }}>
+          <Box sx={{ flexBasis: '20%', flexShrink: 0 }}>
+            <Filters
+              searchFilter={searchFilter}
+              handleFilterChange={handleFilterChange}
+              labelFilter={labelFilter}
+              labels={labels}
+              issueStatusFilter={issueStatusFilter}
+              issueFilter={issueFilter}
+            />
+          </Box>
+          <Box sx={{ flex: 1 }}>
+            <IssuesTable issues={issues} />
+          </Box>
+        </Box>
       </Box>
     </Container>
   );
