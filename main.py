@@ -14,7 +14,7 @@ HEADERS = {
     "Authorization": f"Bearer {os.environ['GITHUB_TOKEN']}",
 }
 
-MAX_CONCURRENT_REQUESTS = 20
+MAX_CONCURRENT_REQUESTS = 10
 
 
 async def fetch_issues_for_page(page, session):
