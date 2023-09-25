@@ -12,9 +12,7 @@ import {
   Typography,
   Container,
   Box,
-  TextField,
   FormControl,
-  Autocomplete,
   InputLabel,
   Select,
   Avatar,
@@ -31,6 +29,7 @@ import { Issue, Label } from './types';
 import { fetchIssues, fetchLabels } from './api';
 import SearchField from './SearchField';
 import LabelFilter from './LabelFilter';
+import useInfiniteScroll from './useInfiniteScroll';
 
 function IssueList() {
   const [issues, setIssues] = useState<Issue[]>([]);
@@ -94,17 +93,11 @@ function IssueList() {
     [fetchData],
   );
 
-  const handleScroll = useCallback(() => {
-    throttledFetchData();
-  }, [throttledFetchData]);
-
   useEffect(() => {
     fetchData();
-    window.addEventListener('scroll', handleScroll);
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, [fetchData, handleScroll]);
+  }, [fetchData]);
+  useInfiniteScroll(throttledFetchData);
+
   type StandardEvent = {
     target: {
       name: string;
