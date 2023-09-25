@@ -132,9 +132,43 @@ function IssueRow({ issue }: IssueRowProps) {
               ))}
           </Box>
 
-          <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
+          <Typography
+            variant="body2"
+            color="textSecondary"
+            sx={{ mt: 1, display: 'flex', alignItems: 'center' }}
+          >
             #{issue.number} opened {issue.created_at.toString()} by{' '}
-            {issue.user.login}
+            {issue.user.type === 'Mannequin' ? (
+              <span style={{ color: 'gray', fontStyle: 'italic' }}>
+                Mannequin
+              </span>
+            ) : (
+              <Link
+                href={`https://github.com/${issue.user.login}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                underline="hover"
+                color="inherit"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  textDecoration: 'none',
+                }}
+              >
+                <img
+                  src={issue.user.avatar_url}
+                  alt={`${issue.user.login}'s avatar`}
+                  style={{
+                    width: '20px',
+                    height: '20px',
+                    borderRadius: '50%',
+                    marginRight: '5px',
+                    marginLeft: '5px',
+                  }}
+                />
+                {issue.user.login}
+              </Link>
+            )}
           </Typography>
         </Box>
       </TableCell>
