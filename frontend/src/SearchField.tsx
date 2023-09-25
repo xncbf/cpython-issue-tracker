@@ -1,9 +1,9 @@
 import { TextField } from '@mui/material';
 
 type SearchFilterProps = {
-    value: string;
-    onChange: any;
-  };
+  value: string;
+  onChange: any;
+};
 
 function SearchField({ value, onChange }: SearchFilterProps) {
   return (

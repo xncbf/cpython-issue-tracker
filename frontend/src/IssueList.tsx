@@ -155,7 +155,11 @@ function IssueList() {
         >
           <SearchField value={searchFilter} onChange={handleFilterChange} />
           <FormControl variant="outlined" sx={{ flex: 1 }}>
-          <LabelFilter labels={labels} value={labelFilter} onChange={handleFilterChange} />
+            <LabelFilter
+              labels={labels}
+              value={labelFilter}
+              onChange={handleFilterChange}
+            />
           </FormControl>
         </Box>
 
