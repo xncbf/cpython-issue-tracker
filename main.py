@@ -14,7 +14,7 @@ HEADERS = {
     "Authorization": f"Bearer {os.environ['GITHUB_TOKEN']}",
 }
 
-MAX_CONCURRENT_REQUESTS = 10
+MAX_CONCURRENT_REQUESTS = 20
 
 
 async def fetch_issues_for_page(page, session):
@@ -36,6 +36,7 @@ async def fetch_all_issues_async():
     async with httpx.AsyncClient() as client:
         while True:
             tasks = []
+            print(page)
             for _ in range(MAX_CONCURRENT_REQUESTS):
                 tasks.append(fetch_issues_for_page(page, client))
                 page += 1
@@ -46,8 +47,8 @@ async def fetch_all_issues_async():
 
             for issues in pages_data:
                 if not issues:
+                    print("No issues")
                     continue
-                print(page)
                 for issue_data in issues:
                     labels = issue_data.pop("labels")
                     assignee = issue_data.pop("assignee", None)
@@ -73,7 +74,6 @@ async def fetch_all_issues_async():
 
                     labels = [await Label.objects.aget(id=label["id"]) for label in labels]
                     await issue.labels.aset(labels)
-                page += 1
 
 
 def fetch_all_labels():
