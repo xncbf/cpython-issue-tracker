@@ -25,8 +25,9 @@ import {
 } from '@mui/material';
 import _ from 'lodash';
 import CommentIcon from '@mui/icons-material/Comment';
-import { Issue, Label } from '../../types';
+import { Issue, Label, User } from '../../types';
 import { fetchIssues, fetchLabels } from '../../api';
+import AuthorFilter from './AuthorFilter';
 import SearchField from './SearchField';
 import LabelFilter from './LabelFilter';
 import useInfiniteScroll from './useInfiniteScroll';
@@ -34,6 +35,8 @@ import useLocalStorage from './useLocalStorage';
 
 type FiltersProps = {
   searchFilter: string;
+  authorFilter: string[];
+  authors: User[];
   labelFilter: string[];
   labels: Label[];
   issueStatusFilter: 'ALL' | 'OPEN' | 'CLOSED';
@@ -43,6 +46,8 @@ type FiltersProps = {
 
 function Filters({
   searchFilter,
+  authorFilter,
+  authors,
   labelFilter,
   labels,
   issueStatusFilter,
@@ -54,14 +59,16 @@ function Filters({
       sx={{ marginBottom: 3, display: 'flex', flexDirection: 'column', gap: 3 }}
     >
       <SearchField value={searchFilter} onChange={handleFilterChange} />
-
-      <FormControl variant="outlined" fullWidth>
-        <LabelFilter
-          labels={labels}
-          value={labelFilter}
-          onChange={handleFilterChange}
-        />
-      </FormControl>
+      <AuthorFilter
+        authors={authors}
+        value={authorFilter}
+        onChange={handleFilterChange}
+      />
+      <LabelFilter
+        labels={labels}
+        value={labelFilter}
+        onChange={handleFilterChange}
+      />
 
       <FormControl variant="outlined" fullWidth>
         <InputLabel id="issue-status-label">status</InputLabel>
@@ -241,9 +248,14 @@ function IssuesTable({ issues }: IssuesTableProps) {
 function IssueList() {
   const [issues, setIssues] = useState<Issue[]>([]);
   const [labels, setLabels] = useState<Label[]>([]);
+  const [authors, setAuthors] = useState<User[]>([]);
   const [searchFilter, setSearchFilter] = useLocalStorage<string>(
     'searchFilter',
     '',
+  );
+  const [authorFilter, setAuthorFilter] = useLocalStorage<string[]>(
+    'authorFilter',
+    [],
   );
   const [labelFilter, setLabelFilter] = useLocalStorage<string[]>(
     'labelFilter',
@@ -328,6 +340,9 @@ function IssueList() {
 
     // console.log(newValue)
     switch (name) {
+      case 'author':
+        setAuthorFilter(value);
+        break;
       case 'search':
         setSearchFilter(value);
         break;
@@ -357,6 +372,8 @@ function IssueList() {
           <Box sx={{ flexBasis: '20%', flexShrink: 0 }}>
             <Filters
               searchFilter={searchFilter}
+              authorFilter={authorFilter}
+              authors={authors}
               handleFilterChange={handleFilterChange}
               labelFilter={labelFilter}
               labels={labels}
