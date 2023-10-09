@@ -10,6 +10,7 @@ type FiltersProps = {
   searchFilter: string;
   authorFilter: string;
   authors: User[];
+  setAuthors: (authors: User[]) => void;
   labelFilter: string[];
   labels: Label[];
   issueStatusFilter: 'ALL' | 'OPEN' | 'CLOSED';
@@ -21,6 +22,7 @@ function Filters({
   searchFilter,
   authorFilter,
   authors,
+  setAuthors,
   labelFilter,
   labels,
   issueStatusFilter,
@@ -34,6 +36,7 @@ function Filters({
       <SearchField value={searchFilter} onChange={handleFilterChange} />
       <AuthorFilter
         authors={authors}
+        setAuthors={setAuthors}
         value={authorFilter}
         onChange={handleFilterChange}
       />

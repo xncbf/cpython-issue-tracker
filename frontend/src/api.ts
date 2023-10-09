@@ -46,10 +46,16 @@ export const fetchLabels = async (): Promise<LabelAPIResponse> => {
   );
   return response.data;
 };
-
-export const fetchUsers = async (): Promise<UserAPIResponse> => {
+export const fetchUsers = async (
+  query: string = '',
+): Promise<UserAPIResponse> => {
   const response = await axios.get<UserAPIResponse>(
     'http://localhost:8000/api/users/',
+    {
+      params: {
+        search: query,
+      },
+    },
   );
   return response.data;
 };

@@ -1,3 +1,4 @@
+from django.db.models import Q
 from ninja import NinjaAPI, Query
 from ninja.pagination import paginate
 
@@ -34,6 +35,8 @@ def list_labels(request, filters: LabelFilterSchema = Query(...)):
 @api.get("/users/", response={200: list[UserSchema]})
 @paginate
 def list_users(request, filters: UserFilterSchema = Query(...)):
-    q = filters.get_filter_expression()
-    queryset = User.objects.filter(q).order_by("login")
+    search_value = filters.search
+    complex_filter = Q(login__icontains=search_value) | Q(html_url__icontains=f"https://github.com/{search_value}")
+
+    queryset = User.objects.filter(complex_filter).order_by("login")
     return queryset

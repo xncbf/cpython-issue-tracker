@@ -39,7 +39,7 @@ class LabelFilterSchema(FilterSchema):
 
 
 class UserFilterSchema(FilterSchema):
-    login: str | None = Field(q="login__icontains")
+    search: str
 
 
 class IssueSchema(Schema):

@@ -79,7 +79,14 @@ function IssueList() {
         console.error('Error fetching data:', error);
       }
     }
-  }, [limit, searchFilter, authorFilter, labelFilter, issueFilter, issueStatusFilter]);
+  }, [
+    limit,
+    searchFilter,
+    authorFilter,
+    labelFilter,
+    issueFilter,
+    issueStatusFilter,
+  ]);
   const throttledFetchData = useMemo(
     () =>
       _.throttle(() => {
@@ -147,6 +154,7 @@ function IssueList() {
               searchFilter={searchFilter}
               authorFilter={authorFilter}
               authors={authors}
+              setAuthors={setAuthors}
               labelFilter={labelFilter}
               labels={labels}
               issueStatusFilter={issueStatusFilter}
