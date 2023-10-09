@@ -1,10 +1,10 @@
 // Filters.tsx
 import React from 'react';
 import { Box, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
-import SearchField from './filters/SearchField';
-import AuthorFilter from './filters/AuthorFilter';
-import LabelFilter from './filters/LabelFilter';
-import { Label, User } from '../../types';
+import SearchField from './SearchField';
+import AuthorFilter from './AuthorFilter';
+import LabelFilter from './LabelFilter';
+import { Label, User } from '../../../types';
 
 type FiltersProps = {
   searchFilter: string;
