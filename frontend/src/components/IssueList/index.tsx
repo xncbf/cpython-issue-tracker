@@ -54,6 +54,7 @@ function IssueList() {
         limit,
         offsetRef.current,
         searchFilter,
+        authorFilter,
         labelFilter,
         issueFilter,
         issueStatusFilter,
@@ -78,7 +79,7 @@ function IssueList() {
         console.error('Error fetching data:', error);
       }
     }
-  }, [limit, searchFilter, labelFilter, issueFilter, issueStatusFilter]);
+  }, [limit, searchFilter, authorFilter, labelFilter, issueFilter, issueStatusFilter]);
   const throttledFetchData = useMemo(
     () =>
       _.throttle(() => {
@@ -146,11 +147,11 @@ function IssueList() {
               searchFilter={searchFilter}
               authorFilter={authorFilter}
               authors={authors}
-              handleFilterChange={handleFilterChange}
               labelFilter={labelFilter}
               labels={labels}
               issueStatusFilter={issueStatusFilter}
               issueFilter={issueFilter}
+              handleFilterChange={handleFilterChange}
             />
           </Box>
           <Box sx={{ flex: 1 }}>

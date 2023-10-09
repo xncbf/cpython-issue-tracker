@@ -14,13 +14,13 @@ function AuthorFilter({ authors, value, onChange }: AuthorFilterProps) {
       options={authors}
       getOptionLabel={(option) => option.login}
       value={authors?.find((author) => author.id.toString() === value)}
-      onChange={(e, v) => onChange('authors', v ? v.id.toString() : '')}
+      onChange={(e, v) => onChange('author', v ? v.id.toString() : '')}
       renderInput={(params) => (
         <TextField
           {...params}
           variant="outlined"
-          placeholder="Search authors..."
-          name="authors"
+          placeholder="Search author..."
+          name="author"
         />
       )}
     />

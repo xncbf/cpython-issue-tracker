@@ -5,6 +5,7 @@ export const fetchIssues = async (
   limit: number,
   offset: number,
   filter: string,
+  authorFilter: string,
   labelFilter: string[],
   issueFilter: string,
   issueStatusFilter: 'ALL' | 'OPEN' | 'CLOSED',
@@ -13,6 +14,10 @@ export const fetchIssues = async (
   let apiUrl = `http://localhost:8000/api/issues/?limit=${limit}&offset=${offset}`;
 
   apiUrl += filter ? `&search=${filter}` : '';
+
+  if (authorFilter !== '') {
+    apiUrl += authorFilter ? `&user_id=${authorFilter}` : '';
+  }
 
   if (labelFilter.length > 0) {
     apiUrl += '&' + labelFilter.map((label) => `labels=${label}`).join('&');
