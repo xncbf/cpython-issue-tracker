@@ -6,7 +6,7 @@ import httpx
 
 django.setup()
 
-from app.models import Issue, Label, User  # noqa
+from app.models import Issue, Label, User, PullRequest  # noqa
 
 GITHUB_API_URL = "https://api.github.com/repos/python/cpython/issues"
 HEADERS = {
@@ -56,9 +56,13 @@ async def fetch_all_issues_async():
                         user, _ = await User.objects.aget_or_create(id=assignee.pop("id"), defaults=assignee)
                         issue_data["assignee"] = user
                     assignees = issue_data.pop("assignees", None)
-                    pull_request = issue_data.pop("pull_request", None)
-                    if pull_request:
+                    pull_request_data = issue_data.pop("pull_request", None)
+                    if pull_request_data:
                         issue_data["is_issue"] = False
+                        pull_request, _ = await PullRequest.objects.aget_or_create(
+                            url=pull_request_data.pop("url"), defaults=pull_request_data
+                        )
+                        issue_data["pull_request"] = pull_request
                     user = issue_data.pop("user")
                     user, _ = await User.objects.aget_or_create(id=user.pop("id"), defaults=user)
                     issue_data["user"] = user
