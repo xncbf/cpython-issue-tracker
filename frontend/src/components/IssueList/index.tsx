@@ -15,9 +15,9 @@ import useInfiniteScroll from './useInfiniteScroll';
 import useLocalStorage from './useLocalStorage';
 
 function IssueList() {
-  const [issues, setIssues] = useState<Issue[]>([]);
-  const [labels, setLabels] = useState<Label[]>([]);
-  const [authors, setAuthors] = useState<User[]>([]);
+  const [issues, setIssues] = useLocalStorage<Issue[]>('issues', []);
+  const [labels, setLabels] = useLocalStorage<Label[]>('labels', []);
+  const [authors, setAuthors] = useLocalStorage<User[]>('authors', []);
   const [searchFilter, setSearchFilter] = useLocalStorage<string>(
     'searchFilter',
     '',
