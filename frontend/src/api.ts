@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { IssueAPIResponse, LabelAPIResponse } from './types';
+import { IssueAPIResponse, LabelAPIResponse, UserAPIResponse } from './types';
 
 export const fetchIssues = async (
   limit: number,
@@ -38,6 +38,13 @@ export const fetchIssues = async (
 export const fetchLabels = async (): Promise<LabelAPIResponse> => {
   const response = await axios.get<LabelAPIResponse>(
     'http://localhost:8000/api/labels/',
+  );
+  return response.data;
+};
+
+export const fetchUsers = async (): Promise<UserAPIResponse> => {
+  const response = await axios.get<UserAPIResponse>(
+    'http://localhost:8000/api/users/',
   );
   return response.data;
 };

@@ -38,6 +38,10 @@ class LabelFilterSchema(FilterSchema):
     name: str | None = Field(q="name__icontains")
 
 
+class UserFilterSchema(FilterSchema):
+    login: str | None = Field(q="login__icontains")
+
+
 class IssueSchema(Schema):
     active_lock_reason: str | None = None
     assignee: UserSchema | None = None

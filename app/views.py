@@ -1,8 +1,8 @@
 from ninja import NinjaAPI, Query
 from ninja.pagination import paginate
 
-from .models import Issue, Label
-from .schemas import IssueFilterSchema, IssueSchema, LabelFilterSchema, LabelSchema
+from .models import Issue, Label, User
+from .schemas import IssueFilterSchema, IssueSchema, LabelFilterSchema, LabelSchema, UserFilterSchema, UserSchema
 
 api = NinjaAPI()
 
@@ -28,4 +28,12 @@ def get_issue(request, issue_id: int):
 def list_labels(request, filters: LabelFilterSchema = Query(...)):
     q = filters.get_filter_expression()
     queryset = Label.objects.filter(q).order_by("name")
+    return queryset
+
+
+@api.get("/users/", response={200: list[UserSchema]})
+@paginate
+def list_users(request, filters: UserFilterSchema = Query(...)):
+    q = filters.get_filter_expression()
+    queryset = User.objects.filter(q).order_by("login")
     return queryset

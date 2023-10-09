@@ -45,6 +45,13 @@ export type LabelAPIResponse = {
   items: Label[];
 };
 
+export type UserAPIResponse = {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  items: User[];
+};
+
 export type Label = {
   id: number;
   node_id: string;

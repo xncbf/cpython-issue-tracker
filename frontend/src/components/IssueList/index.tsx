@@ -26,7 +26,7 @@ import {
 import _ from 'lodash';
 import CommentIcon from '@mui/icons-material/Comment';
 import { Issue, Label, User } from '../../types';
-import { fetchIssues, fetchLabels } from '../../api';
+import { fetchIssues, fetchLabels, fetchUsers } from '../../api';
 import AuthorFilter from './AuthorFilter';
 import SearchField from './SearchField';
 import LabelFilter from './LabelFilter';
@@ -35,7 +35,7 @@ import useLocalStorage from './useLocalStorage';
 
 type FiltersProps = {
   searchFilter: string;
-  authorFilter: string[];
+  authorFilter: string;
   authors: User[];
   labelFilter: string[];
   labels: Label[];
@@ -253,9 +253,9 @@ function IssueList() {
     'searchFilter',
     '',
   );
-  const [authorFilter, setAuthorFilter] = useLocalStorage<string[]>(
+  const [authorFilter, setAuthorFilter] = useLocalStorage<string>(
     'authorFilter',
-    [],
+    '',
   );
   const [labelFilter, setLabelFilter] = useLocalStorage<string[]>(
     'labelFilter',
@@ -299,6 +299,9 @@ function IssueList() {
 
       const labelsData = await fetchLabels();
       setLabels(labelsData.items);
+
+      const authorsData = await fetchUsers();
+      setAuthors(authorsData.items);
     } catch (error: any) {
       if (error.name === 'CanceledError') {
         console.log('Fetch aborted');
