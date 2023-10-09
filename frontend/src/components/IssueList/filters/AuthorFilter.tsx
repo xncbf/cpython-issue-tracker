@@ -1,5 +1,5 @@
 import { TextField, Autocomplete } from '@mui/material';
-import { User } from '../../types';
+import { User } from '../../../types';
 
 type AuthorFilterProps = {
   authors: User[];
